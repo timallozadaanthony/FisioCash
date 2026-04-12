@@ -3,102 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0F6E56">
+<meta name="theme-color" content="#0C213C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="FisioCash">
 <title>FisioCash</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;}
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;}
-.login-card{background:#fff;border:1px solid #e8e8e0;border-radius:16px;padding:2rem;width:100%;max-width:360px;}
-.login-brand{text-align:center;margin-bottom:1.75rem;}
-.login-brand-name{font-size:28px;font-weight:700;color:#0F6E56;letter-spacing:-0.5px;display:block;}
-.login-brand-sub{font-size:12px;color:#aaa;margin-top:4px;display:block;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#0C213C;min-height:100vh;}
+
+/* ── PALETA ──
+  Primary dark:   #0C213C  (navy oscuro)
+  Primary mid:    #2A4057  (azul pizarra)
+  Primary blue:   #254E7A  (azul marino)
+  Light blue:     #CBE3EF  (azul cielo)
+  Gray:           #ACACAC  (gris neutro)
+  Background:     #f0f4f8  (casi blanco azulado)
+*/
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;background:linear-gradient(160deg,#0C213C 0%,#254E7A 100%);}
+.login-card{background:#fff;border-radius:20px;padding:2.5rem 2rem 2rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(12,33,60,0.35);}
+.login-brand{text-align:center;margin-bottom:2rem;}
+.login-brand-name{font-size:38px;font-weight:800;color:#0C213C;letter-spacing:-1px;display:block;}
+.login-brand-accent{color:#254E7A;}
+.login-brand-sub{font-size:12px;color:#ACACAC;margin-top:6px;display:block;letter-spacing:0.5px;}
 .login-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
-.login-field label{font-size:12px;color:#888;font-weight:500;}
-.login-field input{font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;outline:none;transition:border-color .2s;}
-.login-field input:focus{border-color:#1D9E75;background:#fff;}
-.login-btn{width:100%;background:#1D9E75;color:#fff;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;}
-.login-btn:hover{background:#0F6E56;}
-.login-btn:disabled{background:#aaa;cursor:not-allowed;}
-.login-error{font-size:12px;color:#A32D2D;background:#FCEBEB;border-radius:8px;padding:8px 12px;margin-top:10px;display:none;}
-.login-footer{text-align:center;font-size:11px;color:#bbb;margin-top:1.25rem;}
+.login-field label{font-size:12px;color:#2A4057;font-weight:600;letter-spacing:0.3px;}
+.login-field input{font-size:14px;padding:11px 14px;border-radius:10px;border:1.5px solid #CBE3EF;background:#f7fafc;color:#0C213C;outline:none;transition:border-color .2s;}
+.login-field input:focus{border-color:#254E7A;background:#fff;}
+.login-btn{width:100%;background:#0C213C;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;letter-spacing:0.3px;transition:background .2s;}
+.login-btn:hover{background:#254E7A;}
+.login-btn:disabled{background:#ACACAC;cursor:not-allowed;}
+.login-error{font-size:12px;color:#8B1C1C;background:#FDEAEA;border-radius:8px;padding:9px 12px;margin-top:10px;display:none;}
+.login-footer{text-align:center;font-size:11px;color:#ACACAC;margin-top:1.25rem;}
+
+/* APP */
 #app-screen{display:none;}
-.app{padding:1.25rem 1rem;max-width:800px;margin:0 auto;}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
-.brand{display:flex;align-items:baseline;gap:8px;}
-.brand-name{font-size:22px;font-weight:700;color:#0F6E56;letter-spacing:-0.5px;}
-.brand-sub{font-size:12px;color:#aaa;}
-.logout-btn{font-size:12px;color:#888;background:none;border:1px solid #e0e0d8;border-radius:8px;padding:5px 11px;cursor:pointer;}
-.logout-btn:hover{background:#f5f5f0;}
-.tabs{display:flex;gap:2px;margin-bottom:1.25rem;border-bottom:1px solid #e0e0d8;flex-wrap:wrap;}
-.tab{padding:7px 12px;font-size:13px;cursor:pointer;color:#888;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;}
-.tab.active{color:#0F6E56;border-bottom-color:#1D9E75;font-weight:500;}
+.app{padding:1.5rem 1.25rem;max-width:1000px;margin:0 auto;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid #CBE3EF;}
+.brand-name{font-size:36px;font-weight:800;color:#0C213C;letter-spacing:-1px;}
+.brand-name span{color:#254E7A;}
+.logout-btn{font-size:12px;color:#2A4057;background:#fff;border:1.5px solid #CBE3EF;border-radius:8px;padding:7px 14px;cursor:pointer;font-weight:500;transition:all .2s;}
+.logout-btn:hover{background:#0C213C;color:#fff;border-color:#0C213C;}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:#fff;padding:5px;border-radius:14px;border:1.5px solid #CBE3EF;flex-wrap:wrap;}
+.tab{padding:9px 16px;font-size:13px;cursor:pointer;color:#2A4057;border:none;background:none;border-radius:10px;font-weight:500;transition:all .2s;}
+.tab:hover{background:#CBE3EF;color:#0C213C;}
+.tab.active{background:#0C213C;color:#fff;font-weight:600;}
+
 .panel{display:none;}.panel.active{display:block;}
-.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:1rem;}
-.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:1rem;}
-.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:1rem;}
-.metric{background:#fff;border-radius:8px;padding:11px 13px;border:1px solid #e8e8e0;}
-.metric .lbl{font-size:11px;color:#888;margin-bottom:3px;}
-.metric .val{font-size:19px;font-weight:600;color:#1a1a1a;}
-.metric .sub{font-size:10px;color:#aaa;margin-top:2px;}
-.tv{color:#0F6E56!important;}.av{color:#854F0B!important;}.pv{color:#534AB7!important;}.rv{color:#A32D2D!important;}.bv{color:#185FA5!important;}
-.card{background:#fff;border:1px solid #e8e8e0;border-radius:12px;padding:.9rem 1.1rem;margin-bottom:.9rem;}
-.card-title{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:9px;}
-.form-row{display:flex;gap:7px;flex-wrap:wrap;align-items:flex-end;}
-.field{display:flex;flex-direction:column;gap:3px;flex:1;min-width:88px;}
-.field label{font-size:11px;color:#888;}
-.field input,.field select{font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;outline:none;}
-.field input:focus,.field select:focus{border-color:#1D9E75;}
-.tarifa-hint{font-size:11px;color:#0F6E56;font-weight:500;padding:4px 8px;background:#E1F5EE;border-radius:8px;display:none;align-items:center;height:30px;white-space:nowrap;}
-.btn{border:none;border-radius:8px;padding:6px 13px;font-size:12px;cursor:pointer;height:30px;white-space:nowrap;font-weight:500;}
-.btn-g{background:#1D9E75;color:#fff;}.btn-g:hover{background:#0F6E56;}
-.btn-gcal{background:#E6F1FB;color:#185FA5;border:1px solid #B5D4F4;font-size:11px;height:26px;padding:4px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
-.table-wrap{border:1px solid #e8e8e0;border-radius:12px;overflow:hidden;margin-bottom:.9rem;background:#fff;}
-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
-thead th{background:#f5f5f0;padding:7px 9px;text-align:left;font-weight:500;color:#888;border-bottom:1px solid #e8e8e0;}
-tbody tr{border-bottom:1px solid #f0f0e8;}tbody tr:last-child{border-bottom:none;}
-tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.empty{text-align:center;color:#bbb;padding:1.5rem;font-size:12px;}
-.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:11px;padding:2px 4px;border-radius:4px;}
-.del-btn:hover{background:#FCEBEB;color:#A32D2D;}
-.badge{display:inline-block;font-size:10px;padding:2px 6px;border-radius:99px;white-space:nowrap;}
-.bg-green{background:#EAF3DE;color:#3B6D11;}.bg-blue{background:#E6F1FB;color:#185FA5;}
-.bg-amber{background:#FAEEDA;color:#854F0B;}.bg-coral{background:#FAECE7;color:#993C1D;}
-.bg-purple{background:#EEEDFE;color:#534AB7;}.bg-red{background:#FCEBEB;color:#A32D2D;}
-.bg-gray{background:#F1EFE8;color:#5F5E5A;}.bg-teal{background:#E1F5EE;color:#085041;}
-.bg-pink{background:#FBEAF0;color:#72243E;}
-.filter-row{display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap;align-items:center;}
-.filter-row select{font-size:12px;padding:4px 7px;border-radius:8px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;}
-.prog-track{height:9px;border-radius:5px;background:#f0f0e8;overflow:hidden;margin-bottom:3px;}
+
+/* METRICS */
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:1.25rem;}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:1.25rem;}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.25rem;}
+.metric{background:#fff;border-radius:12px;padding:16px 18px;border:1.5px solid #CBE3EF;}
+.metric .lbl{font-size:12px;color:#ACACAC;margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+.metric .val{font-size:26px;font-weight:700;color:#0C213C;}
+.metric .sub{font-size:11px;color:#ACACAC;margin-top:3px;}
+.tv{color:#254E7A!important;}.av{color:#2A4057!important;}.pv{color:#254E7A!important;}.rv{color:#8B1C1C!important;}.bv{color:#2A4057!important;}
+
+/* CARDS */
+.card{background:#fff;border:1.5px solid #CBE3EF;border-radius:14px;padding:1.1rem 1.3rem;margin-bottom:1rem;}
+.card-title{font-size:14px;font-weight:700;color:#0C213C;margin-bottom:11px;letter-spacing:0.2px;}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:90px;}
+.field label{font-size:11px;color:#2A4057;font-weight:600;letter-spacing:0.3px;}
+.field input,.field select{font-size:13px;padding:8px 10px;border-radius:8px;border:1.5px solid #CBE3EF;background:#f7fafc;color:#0C213C;outline:none;}
+.field input:focus,.field select:focus{border-color:#254E7A;background:#fff;}
+.tarifa-hint{font-size:12px;color:#254E7A;font-weight:600;padding:6px 10px;background:#CBE3EF;border-radius:8px;display:none;align-items:center;height:34px;white-space:nowrap;}
+
+/* BUTTONS */
+.btn{border:none;border-radius:8px;padding:7px 16px;font-size:13px;cursor:pointer;height:34px;white-space:nowrap;font-weight:600;}
+.btn-g{background:#0C213C;color:#fff;}.btn-g:hover{background:#254E7A;}
+.btn-gcal{background:#CBE3EF;color:#0C213C;border:none;font-size:11px;height:28px;padding:4px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600;}
+.btn-gcal:hover{background:#2A4057;color:#fff;}
+
+/* TABLES */
+.table-wrap{border:1.5px solid #CBE3EF;border-radius:14px;overflow:hidden;margin-bottom:1rem;background:#fff;}
+table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;}
+thead th{background:#0C213C;padding:12px 14px;text-align:left;font-weight:600;color:#CBE3EF;font-size:13px;letter-spacing:0.4px;}
+tbody tr{border-bottom:1.5px solid #CBE3EF;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:#f7fafc;}
+tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:500;}
+.empty{text-align:center;color:#ACACAC;padding:2rem;font-size:13px;}
+.del-btn{background:none;border:none;color:#ACACAC;cursor:pointer;font-size:12px;padding:3px 6px;border-radius:6px;}
+.del-btn:hover{background:#FDEAEA;color:#8B1C1C;}
+
+/* BADGES */
+.badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:99px;white-space:nowrap;font-weight:600;}
+.bg-green{background:#d4edda;color:#1a5e2a;}
+.bg-blue{background:#CBE3EF;color:#0C213C;}
+.bg-amber{background:#fff3cd;color:#6b4500;}
+.bg-coral{background:#fde8e0;color:#7a2e1a;}
+.bg-purple{background:#e8e0f5;color:#3a1a6e;}
+.bg-red{background:#FDEAEA;color:#8B1C1C;}
+.bg-gray{background:#e8e8e8;color:#4a4a4a;}
+.bg-teal{background:#CBE3EF;color:#2A4057;}
+.bg-pink{background:#fde0ec;color:#6e1a3a;}
+.pay-badge-efectivo{background:#d4edda;color:#1a5e2a;}
+.pay-badge-transferencia{background:#CBE3EF;color:#0C213C;}
+.pay-badge-tarjeta{background:#e8e0f5;color:#3a1a6e;}
+.pay-badge-otro{background:#e8e8e8;color:#4a4a4a;}
+
+/* FILTERS */
+.filter-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+.filter-row select{font-size:13px;padding:7px 10px;border-radius:8px;border:1.5px solid #CBE3EF;background:#fff;color:#0C213C;font-weight:500;}
+
+/* PROGRESS */
+.prog-track{height:10px;border-radius:5px;background:#CBE3EF;overflow:hidden;margin-bottom:4px;}
 .prog-fill{height:100%;border-radius:5px;transition:width .4s;}
-.prog-labels{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:4px;}
-.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;}
-.patient-row{display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid #f0f0e8;cursor:pointer;}
+.prog-labels{display:flex;justify-content:space-between;font-size:12px;color:#2A4057;margin-bottom:5px;font-weight:600;}
+
+/* PATIENTS */
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.patient-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1.5px solid #CBE3EF;cursor:pointer;}
 .patient-row:last-child{border-bottom:none;}
-.patient-row:hover{background:#fafaf5;}
-.section-div{font-size:12px;font-weight:500;color:#888;margin:1rem 0 7px;border-bottom:1px solid #e8e8e0;padding-bottom:5px;}
-.cita-card{padding:10px 13px;border-bottom:1px solid #f0f0e8;}
+.patient-row:hover{background:#f7fafc;}
+
+/* SECTION DIVIDER */
+.section-div{font-size:13px;font-weight:700;color:#2A4057;margin:1.25rem 0 8px;border-bottom:2px solid #CBE3EF;padding-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* CITAS */
+.cita-card{padding:12px 16px;border-bottom:1.5px solid #CBE3EF;}
 .cita-card:last-child{border-bottom:none;}
-.toast{position:fixed;bottom:20px;right:20px;background:#0F6E56;color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0C213C;color:#CBE3EF;font-size:13px;padding:12px 20px;border-radius:12px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(12,33,60,.4);font-weight:500;}
 .toast.show{opacity:1;}
-.paq-bar-bg{height:6px;border-radius:3px;background:#e8e8e0;overflow:hidden;margin-top:4px;}
-.paq-bar-fill{height:100%;border-radius:3px;background:#1D9E75;transition:width .4s;}
-.paq-card{background:#fff;border:1px solid #e8e8e0;border-radius:12px;padding:10px 13px;margin-bottom:8px;}
-.paq-sesion-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #f0f0e8;font-size:12px;}
+
+/* PAQUETES */
+.paq-bar-bg{height:8px;border-radius:4px;background:#CBE3EF;overflow:hidden;margin-top:5px;}
+.paq-bar-fill{height:100%;border-radius:4px;background:#254E7A;transition:width .4s;}
+.paq-card{background:#fff;border:1.5px solid #CBE3EF;border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.paq-sesion-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1.5px solid #CBE3EF;font-size:13px;}
 .paq-sesion-row:last-child{border-bottom:none;}
-.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:12px;}
-.spinner{width:36px;height:36px;border:3px solid #e0e0d8;border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:rgba(12,33,60,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px;}
+.spinner{width:40px;height:40px;border:3px solid rgba(203,227,239,0.3);border-top-color:#CBE3EF;border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:13px;color:#888;}
-.pay-badge-efectivo{background:#EAF3DE;color:#3B6D11;}
-.pay-badge-transferencia{background:#E6F1FB;color:#185FA5;}
-.pay-badge-tarjeta{background:#EEEDFE;color:#534AB7;}
-.pay-badge-otro{background:#F1EFE8;color:#5F5E5A;}
-.paq-aviso{display:none;margin-top:8px;padding:7px 10px;background:#FAEEDA;border-radius:8px;font-size:12px;color:#854F0B;}
-@media(max-width:600px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr));}.brand-sub{display:none;}}
+.loading-text{font-size:14px;color:#CBE3EF;font-weight:500;}
+
+.paq-aviso{display:none;margin-top:10px;padding:8px 12px;background:#CBE3EF;border-radius:8px;font-size:12px;color:#0C213C;font-weight:500;}
+
+@media(max-width:600px){
+  .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .brand-name{font-size:26px;}
+  table{font-size:12px;}
+  thead th,tbody td{padding:9px 10px;}
+}
 </style>
 </head>
 <body>
@@ -113,8 +172,8 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
 <div id="login-screen">
   <div class="login-card">
     <div class="login-brand">
-      <span class="login-brand-name">FisioCash</span>
-      <span class="login-brand-sub">Consultorio de fisioterapia</span>
+      <span class="login-brand-name">Fisio<span class="login-brand-accent">Cash</span></span>
+      <span class="login-brand-sub">CONSULTORIO DE FISIOTERAPIA</span>
     </div>
     <div class="login-field">
       <label>Correo electrónico</label>
@@ -127,20 +186,19 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
     </div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="login-error"></div>
-    <div class="login-footer">Acceso exclusivo · Tus datos están protegidos 🔒</div>
+    <div class="login-footer">Acceso exclusivo · Datos protegidos 🔒</div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app-screen">
 <div class="app">
+
   <div class="topbar">
-    <div class="brand">
-      <span class="brand-name">FisioCash</span>
-      <span class="brand-sub">Consultorio · 60% reinversión · 40% salario</span>
-    </div>
+    <div class="brand-name">Fisio<span>Cash</span></div>
     <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
   </div>
+
   <div class="tabs">
     <button class="tab active" onclick="switchTab('ingresos',this)">Ingresos</button>
     <button class="tab" onclick="switchTab('gastos',this)">Gastos</button>
@@ -173,22 +231,25 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
     <div class="card">
       <div class="card-title">Agregar ingreso manual</div>
       <div class="form-row">
-        <div class="field" style="max-width:118px;"><label>Fecha</label><input type="date" id="i-date"></div>
+        <div class="field" style="max-width:130px;"><label>Fecha</label><input type="date" id="i-date"></div>
         <div class="field" style="flex:2;"><label>Concepto / Paciente</label><input type="text" id="i-concept" placeholder="Ej. Terapia — Juan Pérez"></div>
         <div class="field"><label>Servicio</label>
-          <select id="i-serv">
-            <option>Terapia</option><option>Valoración</option><option>Descarga muscular</option>
-            <option>Descarga completa</option><option>Plan de entrenamiento</option>
-            <option>Paquete 5 sesiones</option><option>Paquete 10 sesiones</option><option>Otro</option>
-          </select></div>
+          <select id="i-serv"><option>Terapia</option><option>Valoración</option><option>Descarga muscular</option><option>Descarga completa</option><option>Plan de entrenamiento</option><option>Paquete 5 sesiones</option><option>Paquete 10 sesiones</option><option>Otro</option></select></div>
         <div class="field"><label>Método de pago</label>
           <select id="i-pay"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option><option>Otro</option></select></div>
-        <div class="field" style="max-width:100px;"><label>Monto ($)</label><input type="number" id="i-amount" placeholder="0.00" min="0"></div>
+        <div class="field" style="max-width:110px;"><label>Monto ($)</label><input type="number" id="i-amount" placeholder="0.00" min="0"></div>
         <button class="btn btn-g" onclick="addIngreso()">+ Agregar</button>
       </div>
     </div>
     <div class="table-wrap"><table>
-      <thead><tr><th style="width:80px">Fecha</th><th>Concepto</th><th style="width:120px">Servicio</th><th style="width:95px">Pago</th><th style="width:72px;text-align:right">Monto</th><th style="width:60px;text-align:right">60%</th><th style="width:60px;text-align:right">40%</th><th style="width:24px"></th></tr></thead>
+      <thead><tr>
+        <th style="width:90px">Fecha</th><th>Concepto</th>
+        <th style="width:130px">Servicio</th><th style="width:110px">Pago</th>
+        <th style="width:85px;text-align:right">Monto</th>
+        <th style="width:75px;text-align:right">60%</th>
+        <th style="width:75px;text-align:right">40%</th>
+        <th style="width:32px"></th>
+      </tr></thead>
       <tbody id="i-body"><tr><td colspan="8" class="empty">Cargando...</td></tr></tbody>
     </table></div>
   </div>
@@ -200,23 +261,23 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
       <div class="metric"><div class="lbl">Presupuesto 60%</div><div class="val av" id="g-budget">$0</div><div class="sub">Del total de ingresos</div></div>
       <div class="metric"><div class="lbl">Disponible</div><div class="val tv" id="g-avail">$0</div><div class="sub" id="g-pct-sub">0% usado</div></div>
     </div>
-    <div style="margin-bottom:.9rem;">
+    <div style="margin-bottom:1rem;">
       <div class="prog-labels"><span>Uso del presupuesto de reinversión</span><span id="g-pct-lbl">0%</span></div>
-      <div class="prog-track"><div class="prog-fill" id="g-prog" style="width:0%;background:#1D9E75;"></div></div>
+      <div class="prog-track"><div class="prog-fill" id="g-prog" style="width:0%;background:#254E7A;"></div></div>
     </div>
     <div class="card">
       <div class="card-title">Registrar gasto</div>
       <div class="form-row">
-        <div class="field" style="max-width:118px;"><label>Fecha</label><input type="date" id="g-date"></div>
+        <div class="field" style="max-width:130px;"><label>Fecha</label><input type="date" id="g-date"></div>
         <div class="field" style="flex:2;"><label>Descripción</label><input type="text" id="g-desc" placeholder="Ej. Compra de vendas"></div>
         <div class="field"><label>Categoría</label>
           <select id="g-cat"><option>Insumos</option><option>Equipo</option><option>Renta</option><option>Servicios</option><option>Publicidad</option><option>Otro</option></select></div>
-        <div class="field" style="max-width:100px;"><label>Monto ($)</label><input type="number" id="g-amount" placeholder="0.00" min="0"></div>
+        <div class="field" style="max-width:110px;"><label>Monto ($)</label><input type="number" id="g-amount" placeholder="0.00" min="0"></div>
         <button class="btn btn-g" onclick="addGasto()">+ Agregar</button>
       </div>
     </div>
     <div class="table-wrap"><table>
-      <thead><tr><th style="width:80px">Fecha</th><th>Descripción</th><th style="width:90px">Categoría</th><th style="width:82px;text-align:right">Monto</th><th style="width:24px"></th></tr></thead>
+      <thead><tr><th style="width:90px">Fecha</th><th>Descripción</th><th style="width:110px">Categoría</th><th style="width:95px;text-align:right">Monto</th><th style="width:32px"></th></tr></thead>
       <tbody id="g-body"><tr><td colspan="5" class="empty">Cargando...</td></tr></tbody>
     </table></div>
   </div>
@@ -250,19 +311,15 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
     <div class="card">
       <div class="card-title">Agendar cita</div>
       <div class="form-row">
-        <div class="field" style="max-width:118px;"><label>Fecha</label><input type="date" id="c-date"></div>
-        <div class="field" style="max-width:90px;"><label>Hora (24h)</label><input type="time" id="c-time"></div>
+        <div class="field" style="max-width:130px;"><label>Fecha</label><input type="date" id="c-date"></div>
+        <div class="field" style="max-width:100px;"><label>Hora (24h)</label><input type="time" id="c-time"></div>
         <div class="field" style="flex:2;"><label>Paciente</label>
-          <select id="c-patient" onchange="onCitaFieldChange()"><option value="">— Selecciona paciente —</option></select></div>
+          <select id="c-patient" onchange="onCFF()"><option value="">— Selecciona paciente —</option></select></div>
         <div class="field"><label>Servicio</label>
-          <select id="c-serv" onchange="onCitaFieldChange()">
-            <option>Terapia</option><option>Valoración</option><option>Descarga muscular</option>
-            <option>Descarga completa</option><option>Plan de entrenamiento</option>
-            <option>Paquete 5 sesiones</option><option>Paquete 10 sesiones</option><option>Otro</option>
-          </select></div>
+          <select id="c-serv" onchange="onCFF()"><option>Terapia</option><option>Valoración</option><option>Descarga muscular</option><option>Descarga completa</option><option>Plan de entrenamiento</option><option>Paquete 5 sesiones</option><option>Paquete 10 sesiones</option><option>Otro</option></select></div>
         <div class="field"><label>Método de pago</label>
           <select id="c-pay"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option><option>Otro</option></select></div>
-        <div class="field" style="max-width:105px;"><label>Monto ($)</label><input type="number" id="c-amount" placeholder="0.00" min="0"></div>
+        <div class="field" style="max-width:110px;"><label>Monto ($)</label><input type="number" id="c-amount" placeholder="0.00" min="0"></div>
         <div id="tarifa-hint" class="tarifa-hint"></div>
         <div class="field"><label>Estado</label>
           <select id="c-status"><option value="Pendiente">Pendiente</option><option value="Realizada">Realizada</option><option value="Cancelada">Cancelada</option></select></div>
@@ -288,7 +345,7 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
       <div class="metric"><div class="lbl">Completados</div><div class="val pv" id="pq-completos">0</div></div>
       <div class="metric"><div class="lbl">Sesiones pendientes</div><div class="val av" id="pq-pendientes">0</div></div>
     </div>
-    <div id="pq-list"><div class="empty" style="padding:2rem 0;">Sin paquetes registrados. Se crean al agendar citas con paquete.</div></div>
+    <div id="pq-list"><div class="empty" style="padding:2rem 0;">Sin paquetes. Se crean al agendar citas con paquete.</div></div>
   </div>
 
   <!-- RESUMEN -->
@@ -299,24 +356,24 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
       <div class="metric"><div class="lbl">Total gastos</div><div class="val rv" id="r-gas">$0</div></div>
       <div class="metric"><div class="lbl">Tu salario (40%)</div><div class="val pv" id="r-sal">$0</div></div>
     </div>
-    <div style="margin-bottom:.9rem;">
+    <div style="margin-bottom:1rem;">
       <div class="prog-labels"><span id="r-bar-lbl">Distribución de ingresos</span><span></span></div>
-      <div class="prog-track" style="height:10px;display:flex;">
-        <div style="background:#E24B4A;height:100%;transition:width .4s;" id="r-bar-gas"></div>
-        <div style="background:#1D9E75;height:100%;transition:width .4s;" id="r-bar-sal"></div>
+      <div class="prog-track" style="height:12px;display:flex;">
+        <div style="background:#8B1C1C;height:100%;transition:width .4s;" id="r-bar-gas"></div>
+        <div style="background:#254E7A;height:100%;transition:width .4s;" id="r-bar-sal"></div>
       </div>
-      <div style="display:flex;gap:14px;margin-top:4px;font-size:11px;color:#888;">
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#E24B4A;margin-right:3px;"></span>Gastos</span>
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#1D9E75;margin-right:3px;"></span>Salario</span>
+      <div style="display:flex;gap:16px;margin-top:6px;font-size:12px;color:#2A4057;font-weight:500;">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#8B1C1C;margin-right:4px;"></span>Gastos</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#254E7A;margin-right:4px;"></span>Salario</span>
       </div>
     </div>
     <div class="section-div">Ingresos por servicio</div>
-    <div id="r-serv-breakdown" style="font-size:12px;color:#888;padding:6px 0;">Sin datos aún.</div>
+    <div id="r-serv-breakdown" style="font-size:13px;color:#2A4057;padding:6px 0;">Sin datos aún.</div>
     <div class="section-div">Ingresos por método de pago</div>
-    <div id="r-pay-breakdown" style="font-size:12px;color:#888;padding:6px 0;">Sin datos aún.</div>
+    <div id="r-pay-breakdown" style="font-size:13px;color:#2A4057;padding:6px 0;">Sin datos aún.</div>
     <div class="section-div">Gastos por categoría</div>
-    <div id="r-cat-breakdown" style="font-size:12px;color:#888;padding:6px 0;">Sin datos aún.</div>
-    <div class="section-div" style="margin-top:1rem;">Citas este mes</div>
+    <div id="r-cat-breakdown" style="font-size:13px;color:#2A4057;padding:6px 0;">Sin datos aún.</div>
+    <div class="section-div" style="margin-top:1.25rem;">Citas este mes</div>
     <div class="g4">
       <div class="metric"><div class="lbl">Total</div><div class="val bv" id="r-c-total">0</div></div>
       <div class="metric"><div class="lbl">Realizadas</div><div class="val tv" id="r-c-done">0</div></div>
@@ -324,8 +381,9 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
       <div class="metric"><div class="lbl">Canceladas</div><div class="val rv" id="r-c-canc">0</div></div>
     </div>
   </div>
-</div>
-</div>
+
+</div><!-- /app -->
+</div><!-- /app-screen -->
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -340,12 +398,12 @@ const TARIFAS={'Terapia':350,'Valoración':500,'Descarga muscular':350,'Descarga
 const PAQSES={'Paquete 5 sesiones':5,'Paquete 10 sesiones':10};
 const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const sC={'Terapia':'bg-teal','Valoración':'bg-blue','Descarga muscular':'bg-purple','Descarga completa':'bg-pink','Plan de entrenamiento':'bg-green','Paquete 5 sesiones':'bg-amber','Paquete 10 sesiones':'bg-amber','Otro':'bg-gray'};
-const catC={Insumos:'bg-green',Equipo:'bg-blue',Renta:'bg-amber',Servicios:'bg-purple',Publicidad:'bg-coral',Otro:'bg-coral'};
+const catC={Insumos:'bg-green',Equipo:'bg-blue',Renta:'bg-amber',Servicios:'bg-teal',Publicidad:'bg-coral',Otro:'bg-gray'};
 const payC={Efectivo:'pay-badge-efectivo',Transferencia:'pay-badge-transferencia',Tarjeta:'pay-badge-tarjeta',Otro:'pay-badge-otro'};
 const stC={Realizada:'bg-green',Pendiente:'bg-amber',Cancelada:'bg-red'};
-const dotC={Realizada:'#1D9E75',Pendiente:'#BA7517',Cancelada:'#E24B4A'};
-const avBg=['#E1F5EE','#E6F1FB','#EEEDFE','#FAEEDA','#FAECE7'];
-const avFg=['#0F6E56','#185FA5','#534AB7','#854F0B','#993C1D'];
+const dotC={Realizada:'#254E7A',Pendiente:'#b07800',Cancelada:'#8B1C1C'};
+const avBg=['#CBE3EF','#e8e0f5','#d4edda','#fff3cd','#fde8e0'];
+const avFg=['#0C213C','#3a1a6e','#1a5e2a','#6b4500','#7a2e1a'];
 
 const fmt=n=>'$'+Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
 const dL=d=>{if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];};
@@ -353,32 +411,25 @@ const mK=d=>d?d.substring(0,7):'';
 const ini=n=>n.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
 const isP=s=>s==='Paquete 5 sesiones'||s==='Paquete 10 sesiones';
 const toast=msg=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);};
-const hl=id=>{const e=document.getElementById(id);e.style.borderColor='#E24B4A';setTimeout(()=>e.style.borderColor='',1500);};
+const hl=id=>{const e=document.getElementById(id);e.style.borderColor='#8B1C1C';setTimeout(()=>e.style.borderColor='',1500);};
 const setDates=()=>{['i-date','g-date','c-date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});const ct=document.getElementById('c-time');if(ct)ct.value='08:00';};
 
-/* AUTH */
 window.doLogin=async()=>{
-  const email=document.getElementById('login-email').value.trim();
-  const pass=document.getElementById('login-password').value;
-  const btn=document.getElementById('login-btn');
-  const err=document.getElementById('login-error');
+  const email=document.getElementById('login-email').value.trim(),pass=document.getElementById('login-password').value;
+  const btn=document.getElementById('login-btn'),err=document.getElementById('login-error');
   err.style.display='none';
   if(!email||!pass){err.textContent='Ingresa tu correo y contraseña.';err.style.display='block';return;}
   btn.disabled=true;btn.textContent='Entrando...';
   try{await signInWithEmailAndPassword(auth,email,pass);}
   catch(e){
     const m={'auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Cuenta no encontrada.','auth/wrong-password':'Contraseña incorrecta.','auth/invalid-email':'Correo no válido.','auth/too-many-requests':'Demasiados intentos. Espera unos minutos.'};
-    err.textContent=m[e.code]||'Error al iniciar sesión.';
-    err.style.display='block';btn.disabled=false;btn.textContent='Entrar';
+    err.textContent=m[e.code]||'Error al iniciar sesión.';err.style.display='block';btn.disabled=false;btn.textContent='Entrar';
   }
 };
 window.doLogout=async()=>{unsubs.forEach(u=>u());unsubs=[];ingresos=[];gastos=[];pacientes=[];citas=[];paquetes=[];await signOut(auth);};
 
 onAuthStateChanged(auth,user=>{
-  const ld=document.getElementById('loading');
-  const ls=document.getElementById('login-screen');
-  const as=document.getElementById('app-screen');
-  const btn=document.getElementById('login-btn');
+  const ld=document.getElementById('loading'),ls=document.getElementById('login-screen'),as=document.getElementById('app-screen'),btn=document.getElementById('login-btn');
   if(user){ls.style.display='none';as.style.display='block';ld.style.display='flex';btn.disabled=false;btn.textContent='Entrar';setDates();setupListeners();}
   else{as.style.display='none';ls.style.display='flex';ld.style.display='none';}
 });
@@ -401,21 +452,16 @@ window.switchTab=(id,el)=>{
 };
 function updMF(selId,data){
   const sel=document.getElementById(selId);if(!sel)return;
-  const cur=sel.value;
-  const keys=[...new Set(data.map(e=>mK(e.date)))].filter(Boolean).sort().reverse();
+  const cur=sel.value,keys=[...new Set(data.map(e=>mK(e.date)))].filter(Boolean).sort().reverse();
   sel.innerHTML='<option value="">Todos los meses</option>';
   keys.forEach(k=>{const[y,m]=k.split('-');const o=document.createElement('option');o.value=k;o.textContent=meses[parseInt(m)-1]+' '+y;if(k===cur)o.selected=true;sel.appendChild(o);});
 }
 function gcL(c){
   const[y,mo,d]=c.date.split('-');const[hh,mm]=(c.time||'08:00').split(':');
-  const pad=n=>String(n).padStart(2,'0');
-  const s=`${y}${mo}${d}T${pad(hh)}${pad(mm)}00`;
-  const eH=String((parseInt(hh)+1)%24).padStart(2,'0');
-  const e=`${y}${mo}${d}T${eH}${pad(mm)}00`;
+  const pad=n=>String(n).padStart(2,'0'),s=`${y}${mo}${d}T${pad(hh)}${pad(mm)}00`,eH=String((parseInt(hh)+1)%24).padStart(2,'0'),e=`${y}${mo}${d}T${eH}${pad(mm)}00`;
   return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Cita: '+c.patient+' — '+c.serv)}&dates=${s}/${e}&details=${encodeURIComponent('Paciente: '+c.patient+'\nServicio: '+c.serv+'\nMonto: '+fmt(c.amount||0)+'\nPago: '+(c.pay||'—')+'\n'+(c.notes||''))}`;
 }
 
-/* INGRESOS */
 window.addIngreso=async()=>{
   const date=document.getElementById('i-date').value,concept=document.getElementById('i-concept').value.trim(),serv=document.getElementById('i-serv').value,pay=document.getElementById('i-pay').value,amount=parseFloat(document.getElementById('i-amount').value);
   if(!date||!concept||isNaN(amount)||amount<=0){hl('i-amount');return;}
@@ -430,10 +476,9 @@ function renderIngresos(){
   document.getElementById('i-total').textContent=fmt(tot);document.getElementById('i-reinv').textContent=fmt(tot*.6);document.getElementById('i-salary').textContent=fmt(tot*.4);document.getElementById('i-count').textContent=f.length+' registro'+(f.length!==1?'s':'');
   const tb=document.getElementById('i-body');
   if(!f.length){tb.innerHTML='<tr><td colspan="8" class="empty">Sin registros para este filtro</td></tr>';return;}
-  tb.innerHTML=f.map(e=>`<tr><td style="color:#888">${dL(e.date)}</td><td title="${e.concept}">${e.concept}</td><td><span class="badge ${sC[e.serv]||'bg-gray'}">${e.serv||'—'}</span></td><td><span class="badge ${payC[e.pay]||'pay-badge-otro'}">${e.pay||'—'}</span></td><td style="text-align:right;font-weight:600">${fmt(e.amount)}</td><td style="text-align:right;color:#854F0B">${fmt(e.amount*.6)}</td><td style="text-align:right;color:#534AB7">${fmt(e.amount*.4)}</td><td><button class="del-btn" onclick="delIngreso('${e.id}')">✕</button></td></tr>`).join('');
+  tb.innerHTML=f.map(e=>`<tr><td>${dL(e.date)}</td><td title="${e.concept}">${e.concept}</td><td><span class="badge ${sC[e.serv]||'bg-gray'}">${e.serv||'—'}</span></td><td><span class="badge ${payC[e.pay]||'pay-badge-otro'}">${e.pay||'—'}</span></td><td style="text-align:right;font-weight:700;color:#0C213C">${fmt(e.amount)}</td><td style="text-align:right;color:#2A4057;font-weight:600">${fmt(e.amount*.6)}</td><td style="text-align:right;color:#254E7A;font-weight:600">${fmt(e.amount*.4)}</td><td><button class="del-btn" onclick="delIngreso('${e.id}')">✕</button></td></tr>`).join('');
 }
 
-/* GASTOS */
 window.addGasto=async()=>{
   const date=document.getElementById('g-date').value,desc=document.getElementById('g-desc').value.trim(),cat=document.getElementById('g-cat').value,amount=parseFloat(document.getElementById('g-amount').value);
   if(!date||!desc||isNaN(amount)||amount<=0){hl('g-amount');return;}
@@ -444,17 +489,15 @@ window.delGasto=async id=>{await deleteDoc(doc(db,'gastos',id));toast('Gasto eli
 function renderGastos(){
   const tI=ingresos.reduce((s,e)=>s+e.amount,0),budget=tI*.6,tG=gastos.reduce((s,e)=>s+e.amount,0),pct=budget>0?Math.min(100,Math.round(tG/budget*100)):0;
   document.getElementById('g-total').textContent=fmt(tG);document.getElementById('g-budget').textContent=fmt(budget);document.getElementById('g-avail').textContent=fmt(budget-tG);document.getElementById('g-count').textContent=gastos.length+' registro'+(gastos.length!==1?'s':'');document.getElementById('g-pct-sub').textContent=pct+'% del presupuesto usado';document.getElementById('g-pct-lbl').textContent=pct+'%';
-  const prog=document.getElementById('g-prog');prog.style.width=pct+'%';prog.style.background=pct>90?'#E24B4A':pct>70?'#BA7517':'#1D9E75';
+  const prog=document.getElementById('g-prog');prog.style.width=pct+'%';prog.style.background=pct>90?'#8B1C1C':pct>70?'#b07800':'#254E7A';
   const tb=document.getElementById('g-body');
   if(!gastos.length){tb.innerHTML='<tr><td colspan="5" class="empty">Sin gastos registrados</td></tr>';return;}
-  tb.innerHTML=gastos.map(e=>`<tr><td style="color:#888">${dL(e.date)}</td><td title="${e.desc}">${e.desc}</td><td><span class="badge ${catC[e.cat]||'bg-coral'}">${e.cat}</span></td><td style="text-align:right;font-weight:600;color:#A32D2D">${fmt(e.amount)}</td><td><button class="del-btn" onclick="delGasto('${e.id}')">✕</button></td></tr>`).join('');
+  tb.innerHTML=gastos.map(e=>`<tr><td>${dL(e.date)}</td><td title="${e.desc}">${e.desc}</td><td><span class="badge ${catC[e.cat]||'bg-gray'}">${e.cat}</span></td><td style="text-align:right;font-weight:700;color:#8B1C1C">${fmt(e.amount)}</td><td><button class="del-btn" onclick="delGasto('${e.id}')">✕</button></td></tr>`).join('');
 }
 
-/* PACIENTES */
 window.addPaciente=async()=>{
   const name=document.getElementById('p-name').value.trim();if(!name){hl('p-name');return;}
-  const phone=document.getElementById('p-phone').value.trim(),condition=document.getElementById('p-condition').value.trim();
-  await addDoc(collection(db,'pacientes'),{name,phone,condition,createdAt:Date.now()});
+  await addDoc(collection(db,'pacientes'),{name,phone:document.getElementById('p-phone').value.trim(),condition:document.getElementById('p-condition').value.trim(),createdAt:Date.now()});
   ['p-name','p-phone','p-condition'].forEach(id=>document.getElementById(id).value='');toast('Paciente registrado');
 };
 window.delPaciente=async id=>{await deleteDoc(doc(db,'pacientes',id));toast('Paciente eliminado');};
@@ -473,20 +516,19 @@ function renderPacientes(){
     const ci=i%5,pc=citas.filter(c=>c.patient===p.name),last=pc[0],pqP=paquetes.filter(pq=>pq.patient===p.name&&pq.sesionesUsadas<pq.sesionesTotal);
     return`<div class="patient-row" onclick="togglePD('${p.id}')">
       <div class="avatar" style="background:${avBg[ci]};color:${avFg[ci]}">${ini(p.name)}</div>
-      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.condition||'Sin padecimiento registrado'}</div></div>
-      <div style="text-align:right;min-width:90px;flex-shrink:0;">${p.phone?`<div style="font-size:11px;color:#888">${p.phone}</div>`:''}<div style="font-size:10px;color:#aaa">${pc.length} cita${pc.length!==1?'s':''}</div>${pqP.length?`<div style="font-size:10px;color:#854F0B">${pqP.length} paq. activo${pqP.length!==1?'s':''}</div>`:''}</div>
+      <div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:#0C213C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div style="font-size:12px;color:#ACACAC;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.condition||'Sin padecimiento registrado'}</div></div>
+      <div style="text-align:right;min-width:90px;flex-shrink:0;">${p.phone?`<div style="font-size:12px;color:#2A4057">${p.phone}</div>`:''}<div style="font-size:11px;color:#ACACAC">${pc.length} cita${pc.length!==1?'s':''}</div>${pqP.length?`<div style="font-size:11px;color:#2A4057;font-weight:600">${pqP.length} paq. activo${pqP.length!==1?'s':''}</div>`:''}</div>
       <button class="del-btn" onclick="event.stopPropagation();delPaciente('${p.id}')">✕</button>
     </div>
-    <div id="pd-${p.id}" style="display:none;background:#f9f9f5;padding:8px 13px;font-size:12px;border-bottom:1px solid #f0f0e8;color:#888;">
-      ${last?`Última cita: <strong style="color:#1a1a1a">${dL(last.date)} ${last.time||''}</strong> · ${last.serv} · <span class="badge ${stC[last.status]||'bg-gray'}">${last.status}</span><br>`:'Sin citas registradas.<br>'}
-      ${pqP.map(pq=>`<div style="margin-top:5px;">Paquete: <span class="badge bg-amber">${pq.serv}</span> <strong style="color:#854F0B">${pq.sesionesUsadas}/${pq.sesionesTotal}</strong> sesiones<div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${Math.round(pq.sesionesUsadas/pq.sesionesTotal*100)}%"></div></div></div>`).join('')}
+    <div id="pd-${p.id}" style="display:none;background:#f7fafc;padding:10px 16px;font-size:13px;border-bottom:1.5px solid #CBE3EF;color:#2A4057;">
+      ${last?`Última cita: <strong style="color:#0C213C">${dL(last.date)} ${last.time||''}</strong> · ${last.serv} · <span class="badge ${stC[last.status]||'bg-gray'}">${last.status}</span><br>`:'Sin citas registradas.<br>'}
+      ${pqP.map(pq=>`<div style="margin-top:6px;">Paquete: <span class="badge bg-teal">${pq.serv}</span> <strong style="color:#2A4057">${pq.sesionesUsadas}/${pq.sesionesTotal} sesiones</strong><div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${Math.round(pq.sesionesUsadas/pq.sesionesTotal*100)}%"></div></div></div>`).join('')}
     </div>`;
   }).join('')+'</div>';
 }
 window.togglePD=id=>{const e=document.getElementById('pd-'+id);if(e)e.style.display=e.style.display==='none'?'block':'none';};
 
-/* CITAS */
-window.onCitaFieldChange=()=>{
+window.onCFF=()=>{
   const serv=document.getElementById('c-serv').value,patient=document.getElementById('c-patient').value,tarifa=TARIFAS[serv]||0;
   const hint=document.getElementById('tarifa-hint'),aviso=document.getElementById('paq-aviso');
   if(tarifa>0){document.getElementById('c-amount').value=tarifa;hint.textContent='Tarifa: '+fmt(tarifa);hint.style.display='flex';}else{hint.style.display='none';}
@@ -497,23 +539,16 @@ window.onCitaFieldChange=()=>{
   }else{aviso.style.display='none';}
 };
 async function fOCP(patient,serv,fechaInicio){
-  const ex=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
-  if(ex)return ex;
-  const total=PAQSES[serv];
-  const r=await addDoc(collection(db,'paquetes'),{patient,serv,sesionesTotal:total,sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null,createdAt:Date.now()});
-  return{id:r.id,patient,serv,sesionesTotal:total,sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null};
+  const ex=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);if(ex)return ex;
+  const r=await addDoc(collection(db,'paquetes'),{patient,serv,sesionesTotal:PAQSES[serv],sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null,createdAt:Date.now()});
+  return{id:r.id,patient,serv,sesionesTotal:PAQSES[serv],sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null};
 }
 async function addSP(patient,serv,fecha,citaId){
   const pq=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
-  if(pq){const n=[...(pq.sesiones||[]),{fecha,citaId,num:pq.sesionesUsadas+1}];await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:pq.sesionesUsadas+1,sesiones:n});return pq;}
-  return null;
+  if(pq){await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:pq.sesionesUsadas+1,sesiones:[...(pq.sesiones||[]),{fecha,citaId,num:pq.sesionesUsadas+1}]});return pq;}return null;
 }
 async function remSP(citaId){
-  for(const pq of paquetes){
-    if(!(pq.sesiones||[]).find(s=>s.citaId===citaId))continue;
-    const n=(pq.sesiones||[]).filter(s=>s.citaId!==citaId);
-    await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:Math.max(0,pq.sesionesUsadas-1),sesiones:n});
-  }
+  for(const pq of paquetes){if(!(pq.sesiones||[]).find(s=>s.citaId===citaId))continue;await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:Math.max(0,pq.sesionesUsadas-1),sesiones:(pq.sesiones||[]).filter(s=>s.citaId!==citaId)});}
 }
 window.addCita=async()=>{
   const date=document.getElementById('c-date').value,time=document.getElementById('c-time').value,patient=document.getElementById('c-patient').value,serv=document.getElementById('c-serv').value,pay=document.getElementById('c-pay').value,amount=parseFloat(document.getElementById('c-amount').value)||0,status=document.getElementById('c-status').value,notes=document.getElementById('c-notes').value.trim();
@@ -521,14 +556,8 @@ window.addCita=async()=>{
   let ingresoId=null;
   if(isP(serv)){
     const pq=await fOCP(patient,serv,date);
-    if(status==='Realizada'&&amount>0&&!pq.ingresoId){
-      const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});
-      ingresoId=ir.id;await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});toast('Paquete registrado + ingreso añadido');
-    }
-  }else if(status==='Realizada'&&amount>0){
-    const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});
-    ingresoId=ir.id;toast('Cita realizada — ingreso: '+fmt(amount));
-  }
+    if(status==='Realizada'&&amount>0&&!pq.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});toast('Paquete registrado + ingreso añadido');}
+  }else if(status==='Realizada'&&amount>0){const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;toast('Cita realizada — ingreso: '+fmt(amount));}
   const cr=await addDoc(collection(db,'citas'),{date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:Date.now()});
   if(isP(serv)&&status==='Realizada')await addSP(patient,serv,date,cr.id);
   if(status!=='Realizada')toast('Cita agendada');
@@ -543,15 +572,8 @@ window.updateCitaStatus=async(id,val)=>{
   const c=citas.find(c=>c.id===id);if(!c)return;
   const prev=c.status;await updateDoc(doc(db,'citas',id),{status:val});
   if(val==='Realizada'&&prev!=='Realizada'){
-    if(isP(c.serv)){
-      await addSP(c.patient,c.serv,c.date,c.id);
-      const pq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);
-      if(pq&&!pq.ingresoId&&c.amount>0){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso de paquete registrado');}
-      else{const u=pq?pq.sesionesUsadas+1:1,t=pq?pq.sesionesTotal:'?';toast(`Sesión ${u}/${t} registrada`);}
-    }else if(c.amount>0&&!c.ingresoId){
-      const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});
-      await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso registrado — '+fmt(c.amount));
-    }
+    if(isP(c.serv)){await addSP(c.patient,c.serv,c.date,c.id);const pq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);if(pq&&!pq.ingresoId&&c.amount>0){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso de paquete registrado');}else{const u=pq?pq.sesionesUsadas+1:1,t=pq?pq.sesionesTotal:'?';toast(`Sesión ${u}/${t} registrada`);}}
+    else if(c.amount>0&&!c.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso registrado — '+fmt(c.amount));}
   }
   if((val==='Cancelada'||val==='Pendiente')&&prev==='Realizada'){
     if(isP(c.serv))await remSP(id);
@@ -566,21 +588,21 @@ function renderCitas(){
   if(!f.length){wrap.innerHTML='<div class="table-wrap"><div class="empty">Sin citas para este filtro</div></div>';return;}
   wrap.innerHTML='<div class="table-wrap"><div>'+f.map(c=>{
     const pq=isP(c.serv)?paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv):null;
-    const si=pq?(pq.sesiones||[]).findIndex(s=>s.citaId===c.id):-1;
-    const sI=si>=0?`Sesión ${si+1}/${pq.sesionesTotal}`:'';
-    return`<div class="cita-card"><div style="display:flex;align-items:flex-start;gap:9px;">
-      <div style="width:8px;height:8px;border-radius:50%;background:${dotC[c.status]||'#888'};flex-shrink:0;margin-top:4px;"></div>
-      <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="font-weight:600;font-size:13px;">${c.patient}</span><span class="badge ${sC[c.serv]||'bg-gray'}">${c.serv}</span><span class="badge ${stC[c.status]||'bg-gray'}">${c.status}</span>${c.amount>0&&!isP(c.serv)?`<span class="badge ${payC[c.pay]||'pay-badge-otro'}">${c.pay} · ${fmt(c.amount)}</span>`:''}${sI?`<span class="badge bg-amber">${sI}</span>`:''}</div>
-      <div style="color:#888;font-size:11px;margin-top:2px;">${dL(c.date)}${c.time?' · '+c.time:''}</div>${c.notes?`<div style="color:#aaa;font-size:11px;margin-top:1px;">${c.notes}</div>`:''}</div>
-      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;">
-        <select onchange="updateCitaStatus('${c.id}',this.value)" style="font-size:11px;padding:3px 5px;border-radius:8px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;"><option ${c.status==='Pendiente'?'selected':''}>Pendiente</option><option ${c.status==='Realizada'?'selected':''}>Realizada</option><option ${c.status==='Cancelada'?'selected':''}>Cancelada</option></select>
-        <div style="display:flex;gap:5px;"><a href="${gcL(c)}" target="_blank" class="btn-gcal"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Google Cal</a><button class="del-btn" onclick="delCita('${c.id}')">✕</button></div>
+    const si=pq?(pq.sesiones||[]).findIndex(s=>s.citaId===c.id):-1,sI=si>=0?`Sesión ${si+1}/${pq.sesionesTotal}`:'';
+    return`<div class="cita-card"><div style="display:flex;align-items:flex-start;gap:10px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:${dotC[c.status]||'#888'};flex-shrink:0;margin-top:5px;"></div>
+      <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;"><span style="font-weight:700;font-size:14px;color:#0C213C">${c.patient}</span><span class="badge ${sC[c.serv]||'bg-gray'}">${c.serv}</span><span class="badge ${stC[c.status]||'bg-gray'}">${c.status}</span>${c.amount>0&&!isP(c.serv)?`<span class="badge ${payC[c.pay]||'pay-badge-otro'}">${c.pay} · ${fmt(c.amount)}</span>`:''}${sI?`<span class="badge bg-teal">${sI}</span>`:''}</div>
+      <div style="color:#ACACAC;font-size:12px;margin-top:3px;">${dL(c.date)}${c.time?' · '+c.time:''}</div>${c.notes?`<div style="color:#ACACAC;font-size:12px;margin-top:2px;">${c.notes}</div>`:''}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0;">
+        <select onchange="updateCitaStatus('${c.id}',this.value)" style="font-size:12px;padding:5px 7px;border-radius:8px;border:1.5px solid #CBE3EF;background:#f7fafc;color:#0C213C;font-weight:500;">
+          <option ${c.status==='Pendiente'?'selected':''}>Pendiente</option><option ${c.status==='Realizada'?'selected':''}>Realizada</option><option ${c.status==='Cancelada'?'selected':''}>Cancelada</option>
+        </select>
+        <div style="display:flex;gap:6px;"><a href="${gcL(c)}" target="_blank" class="btn-gcal"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Google Cal</a><button class="del-btn" onclick="delCita('${c.id}')">✕</button></div>
       </div>
     </div></div>`;
   }).join('')+'</div></div>';
 }
 
-/* PAQUETES */
 function renderPaquetes(){
   const act=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).length,comp=paquetes.filter(p=>p.sesionesUsadas>=p.sesionesTotal).length,pend=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).reduce((s,p)=>s+(p.sesionesTotal-p.sesionesUsadas),0);
   document.getElementById('pq-activos').textContent=act;document.getElementById('pq-completos').textContent=comp;document.getElementById('pq-pendientes').textContent=pend;
@@ -588,12 +610,12 @@ function renderPaquetes(){
   if(!paquetes.length){wrap.innerHTML='<div class="empty" style="padding:2rem 0;">Sin paquetes. Se crean al agendar citas con paquete.</div>';return;}
   wrap.innerHTML=paquetes.map(pq=>{
     const pct=Math.round(pq.sesionesUsadas/pq.sesionesTotal*100),done=pq.sesionesUsadas>=pq.sesionesTotal;
-    const sesH=(pq.sesiones||[]).length?(pq.sesiones||[]).map(s=>`<div class="paq-sesion-row"><div style="width:20px;height:20px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#0F6E56;flex-shrink:0;">${s.num}</div><span style="color:#888;">${dL(s.fecha)}</span><span class="badge bg-green" style="margin-left:auto;">Realizada</span></div>`).join(''):'<div style="font-size:12px;color:#aaa;padding:6px 0;">Sin sesiones aún.</div>';
-    return`<div class="paq-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div class="avatar" style="background:${done?'#EAF3DE':'#FAEEDA'};color:${done?'#3B6D11':'#854F0B'}">${ini(pq.patient)}</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;">${pq.patient}</div><div style="font-size:11px;color:#888;">${pq.serv} · desde ${dL(pq.fechaInicio)}</div></div><div style="text-align:right;flex-shrink:0;"><span class="badge ${done?'bg-green':'bg-amber'}">${done?'Completado':'Activo'}</span><div style="font-size:13px;font-weight:600;color:${done?'#0F6E56':'#854F0B'};margin-top:3px;">${pq.sesionesUsadas}/${pq.sesionesTotal}</div></div></div><div class="prog-labels"><span style="font-size:11px;">Progreso</span><span style="font-size:11px;">${pct}%</span></div><div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${pct}%;background:${done?'#1D9E75':'#BA7517'};"></div></div><div style="margin-top:8px;">${sesH}</div></div>`;
+    const sesH=(pq.sesiones||[]).length?(pq.sesiones||[]).map(s=>`<div class="paq-sesion-row"><div style="width:24px;height:24px;border-radius:50%;background:#CBE3EF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0C213C;flex-shrink:0;">${s.num}</div><span style="color:#2A4057;font-size:13px;">${dL(s.fecha)}</span><span class="badge bg-green" style="margin-left:auto;">Realizada</span></div>`).join(''):'<div style="font-size:13px;color:#ACACAC;padding:8px 0;">Sin sesiones aún.</div>';
+    return`<div class="paq-card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div class="avatar" style="background:${done?'#d4edda':'#CBE3EF'};color:${done?'#1a5e2a':'#0C213C'}">${ini(pq.patient)}</div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:#0C213C">${pq.patient}</div><div style="font-size:12px;color:#ACACAC">${pq.serv} · desde ${dL(pq.fechaInicio)}</div></div><div style="text-align:right;flex-shrink:0;"><span class="badge ${done?'bg-green':'bg-teal'}">${done?'Completado':'Activo'}</span><div style="font-size:15px;font-weight:700;color:${done?'#1a5e2a':'#0C213C'};margin-top:4px;">${pq.sesionesUsadas}/${pq.sesionesTotal}</div></div></div>
+    <div class="prog-labels"><span>Progreso</span><span>${pct}%</span></div><div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${pct}%;background:${done?'#1a5e2a':'#254E7A'};"></div></div><div style="margin-top:10px;">${sesH}</div></div>`;
   }).join('');
 }
 
-/* RESUMEN */
 window.renderResumen=()=>{
   const tI=ingresos.reduce((s,e)=>s+e.amount,0),tG=gastos.reduce((s,e)=>s+e.amount,0),sal=tI*.4;
   document.getElementById('r-ing').textContent=fmt(tI);document.getElementById('r-gas').textContent=fmt(tG);document.getElementById('r-sal').textContent=fmt(sal);
@@ -603,15 +625,15 @@ window.renderResumen=()=>{
   const servs={};ingresos.forEach(i=>{servs[i.serv||'Otro']=(servs[i.serv||'Otro']||0)+i.amount;});
   const rsd=document.getElementById('r-serv-breakdown');
   if(!Object.keys(servs).length)rsd.textContent='Sin datos aún.';
-  else rsd.innerHTML=Object.entries(servs).sort((a,b)=>b[1]-a[1]).map(([s,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${sC[s]||'bg-gray'}">${s}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${tI>0?Math.round(a/tI*100):0}%</span></div>`).join('');
+  else rsd.innerHTML=Object.entries(servs).sort((a,b)=>b[1]-a[1]).map(([s,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;"><span><span class="badge ${sC[s]||'bg-gray'}">${s}</span></span><span style="font-weight:700;color:#0C213C">${fmt(a)}</span><span style="color:#ACACAC;font-weight:500">${tI>0?Math.round(a/tI*100):0}%</span></div>`).join('');
   const pays={};ingresos.forEach(i=>{pays[i.pay||'Otro']=(pays[i.pay||'Otro']||0)+i.amount;});
   const rpd=document.getElementById('r-pay-breakdown');
   if(!Object.keys(pays).length)rpd.textContent='Sin datos aún.';
-  else rpd.innerHTML=Object.entries(pays).sort((a,b)=>b[1]-a[1]).map(([p,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${payC[p]||'pay-badge-otro'}">${p}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${tI>0?Math.round(a/tI*100):0}%</span></div>`).join('');
+  else rpd.innerHTML=Object.entries(pays).sort((a,b)=>b[1]-a[1]).map(([p,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;"><span><span class="badge ${payC[p]||'pay-badge-otro'}">${p}</span></span><span style="font-weight:700;color:#0C213C">${fmt(a)}</span><span style="color:#ACACAC;font-weight:500">${tI>0?Math.round(a/tI*100):0}%</span></div>`).join('');
   const cats={};gastos.forEach(g=>{cats[g.cat]=(cats[g.cat]||0)+g.amount;});
   const bd=document.getElementById('r-cat-breakdown'),budget=tI*.6;
   if(!Object.keys(cats).length)bd.textContent='Sin gastos aún.';
-  else bd.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${catC[c]||'bg-coral'}">${c}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${budget>0?Math.round(a/budget*100):0}%</span></div>`).join('');
+  else bd.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;"><span><span class="badge ${catC[c]||'bg-gray'}">${c}</span></span><span style="font-weight:700;color:#0C213C">${fmt(a)}</span><span style="color:#ACACAC;font-weight:500">${budget>0?Math.round(a/budget*100):0}%</span></div>`).join('');
   const cM=today.substring(0,7),mc=citas.filter(c=>mK(c.date)===cM);
   document.getElementById('r-c-total').textContent=mc.length;document.getElementById('r-c-done').textContent=mc.filter(c=>c.status==='Realizada').length;document.getElementById('r-c-pend').textContent=mc.filter(c=>c.status==='Pendiente').length;document.getElementById('r-c-canc').textContent=mc.filter(c=>c.status==='Cancelada').length;
 };
