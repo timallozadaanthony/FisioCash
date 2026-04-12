@@ -11,10 +11,28 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;}
+.login-card{background:#fff;border:1px solid #e8e8e0;border-radius:16px;padding:2rem;width:100%;max-width:360px;}
+.login-brand{text-align:center;margin-bottom:1.75rem;}
+.login-brand-name{font-size:28px;font-weight:700;color:#0F6E56;letter-spacing:-0.5px;display:block;}
+.login-brand-sub{font-size:12px;color:#aaa;margin-top:4px;display:block;}
+.login-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.login-field label{font-size:12px;color:#888;font-weight:500;}
+.login-field input{font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;outline:none;transition:border-color .2s;}
+.login-field input:focus{border-color:#1D9E75;background:#fff;}
+.login-btn{width:100%;background:#1D9E75;color:#fff;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;}
+.login-btn:hover{background:#0F6E56;}
+.login-btn:disabled{background:#aaa;cursor:not-allowed;}
+.login-error{font-size:12px;color:#A32D2D;background:#FCEBEB;border-radius:8px;padding:8px 12px;margin-top:10px;display:none;}
+.login-footer{text-align:center;font-size:11px;color:#bbb;margin-top:1.25rem;}
+#app-screen{display:none;}
 .app{padding:1.25rem 1rem;max-width:800px;margin:0 auto;}
-.brand{display:flex;align-items:baseline;gap:8px;margin-bottom:1.25rem;}
-.brand-name{font-size:22px;font-weight:600;color:#0F6E56;letter-spacing:-0.5px;}
-.brand-sub{font-size:12px;color:#888;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.brand{display:flex;align-items:baseline;gap:8px;}
+.brand-name{font-size:22px;font-weight:700;color:#0F6E56;letter-spacing:-0.5px;}
+.brand-sub{font-size:12px;color:#aaa;}
+.logout-btn{font-size:12px;color:#888;background:none;border:1px solid #e0e0d8;border-radius:8px;padding:5px 11px;cursor:pointer;}
+.logout-btn:hover{background:#f5f5f0;}
 .tabs{display:flex;gap:2px;margin-bottom:1.25rem;border-bottom:1px solid #e0e0d8;flex-wrap:wrap;}
 .tab{padding:7px 12px;font-size:13px;cursor:pointer;color:#888;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;}
 .tab.active{color:#0F6E56;border-bottom-color:#1D9E75;font-weight:500;}
@@ -34,15 +52,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .field label{font-size:11px;color:#888;}
 .field input,.field select{font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;outline:none;}
 .field input:focus,.field select:focus{border-color:#1D9E75;}
-.tarifa-hint{font-size:11px;color:#0F6E56;font-weight:500;padding:4px 8px;background:#E1F5EE;border-radius:8px;display:none;align-items:center;gap:4px;height:30px;white-space:nowrap;}
+.tarifa-hint{font-size:11px;color:#0F6E56;font-weight:500;padding:4px 8px;background:#E1F5EE;border-radius:8px;display:none;align-items:center;height:30px;white-space:nowrap;}
 .btn{border:none;border-radius:8px;padding:6px 13px;font-size:12px;cursor:pointer;height:30px;white-space:nowrap;font-weight:500;}
 .btn-g{background:#1D9E75;color:#fff;}.btn-g:hover{background:#0F6E56;}
 .btn-gcal{background:#E6F1FB;color:#185FA5;border:1px solid #B5D4F4;font-size:11px;height:26px;padding:4px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
 .table-wrap{border:1px solid #e8e8e0;border-radius:12px;overflow:hidden;margin-bottom:.9rem;background:#fff;}
 table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
 thead th{background:#f5f5f0;padding:7px 9px;text-align:left;font-weight:500;color:#888;border-bottom:1px solid #e8e8e0;}
-tbody tr{border-bottom:1px solid #f0f0e8;}
-tbody tr:last-child{border-bottom:none;}
+tbody tr{border-bottom:1px solid #f0f0e8;}tbody tr:last-child{border-bottom:none;}
 tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .empty{text-align:center;color:#bbb;padding:1.5rem;font-size:12px;}
 .del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:11px;padding:2px 4px;border-radius:4px;}
@@ -65,14 +82,14 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
 .section-div{font-size:12px;font-weight:500;color:#888;margin:1rem 0 7px;border-bottom:1px solid #e8e8e0;padding-bottom:5px;}
 .cita-card{padding:10px 13px;border-bottom:1px solid #f0f0e8;}
 .cita-card:last-child{border-bottom:none;}
-.toast{position:fixed;bottom:20px;right:20px;background:#0F6E56;color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+.toast{position:fixed;bottom:20px;right:20px;background:#0F6E56;color:#fff;font-size:13px;padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.15);}
 .toast.show{opacity:1;}
 .paq-bar-bg{height:6px;border-radius:3px;background:#e8e8e0;overflow:hidden;margin-top:4px;}
 .paq-bar-fill{height:100%;border-radius:3px;background:#1D9E75;transition:width .4s;}
 .paq-card{background:#fff;border:1px solid #e8e8e0;border-radius:12px;padding:10px 13px;margin-bottom:8px;}
 .paq-sesion-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #f0f0e8;font-size:12px;}
 .paq-sesion-row:last-child{border-bottom:none;}
-.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:12px;}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:12px;}
 .spinner{width:36px;height:36px;border:3px solid #e0e0d8;border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:13px;color:#888;}
@@ -81,7 +98,7 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
 .pay-badge-tarjeta{background:#EEEDFE;color:#534AB7;}
 .pay-badge-otro{background:#F1EFE8;color:#5F5E5A;}
 .paq-aviso{display:none;margin-top:8px;padding:7px 10px;background:#FAEEDA;border-radius:8px;font-size:12px;color:#854F0B;}
-@media(max-width:600px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr));}.g4 .metric:last-child{display:none;}}
+@media(max-width:600px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr));}.brand-sub{display:none;}}
 </style>
 </head>
 <body>
@@ -90,15 +107,40 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
   <div class="spinner"></div>
   <div class="loading-text">Cargando FisioCash...</div>
 </div>
-
 <div class="toast" id="toast"></div>
 
-<div class="app">
-  <div class="brand">
-    <span class="brand-name">FisioCash</span>
-    <span class="brand-sub">Consultorio de fisioterapia · 60% reinversión · 40% salario</span>
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="login-brand-name">FisioCash</span>
+      <span class="login-brand-sub">Consultorio de fisioterapia</span>
+    </div>
+    <div class="login-field">
+      <label>Correo electrónico</label>
+      <input type="email" id="login-email" placeholder="tu@correo.com" autocomplete="email">
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-footer">Acceso exclusivo · Tus datos están protegidos 🔒</div>
   </div>
+</div>
 
+<!-- APP -->
+<div id="app-screen">
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-name">FisioCash</span>
+      <span class="brand-sub">Consultorio · 60% reinversión · 40% salario</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+  </div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('ingresos',this)">Ingresos</button>
     <button class="tab" onclick="switchTab('gastos',this)">Gastos</button>
@@ -138,28 +180,17 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
             <option>Terapia</option><option>Valoración</option><option>Descarga muscular</option>
             <option>Descarga completa</option><option>Plan de entrenamiento</option>
             <option>Paquete 5 sesiones</option><option>Paquete 10 sesiones</option><option>Otro</option>
-          </select>
-        </div>
+          </select></div>
         <div class="field"><label>Método de pago</label>
-          <select id="i-pay"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option><option>Otro</option></select>
-        </div>
+          <select id="i-pay"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option><option>Otro</option></select></div>
         <div class="field" style="max-width:100px;"><label>Monto ($)</label><input type="number" id="i-amount" placeholder="0.00" min="0"></div>
         <button class="btn btn-g" onclick="addIngreso()">+ Agregar</button>
       </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th style="width:80px">Fecha</th><th>Concepto</th>
-          <th style="width:120px">Servicio</th><th style="width:95px">Pago</th>
-          <th style="width:72px;text-align:right">Monto</th>
-          <th style="width:60px;text-align:right">60%</th>
-          <th style="width:60px;text-align:right">40%</th>
-          <th style="width:24px"></th>
-        </tr></thead>
-        <tbody id="i-body"><tr><td colspan="8" class="empty">Cargando...</td></tr></tbody>
-      </table>
-    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th style="width:80px">Fecha</th><th>Concepto</th><th style="width:120px">Servicio</th><th style="width:95px">Pago</th><th style="width:72px;text-align:right">Monto</th><th style="width:60px;text-align:right">60%</th><th style="width:60px;text-align:right">40%</th><th style="width:24px"></th></tr></thead>
+      <tbody id="i-body"><tr><td colspan="8" class="empty">Cargando...</td></tr></tbody>
+    </table></div>
   </div>
 
   <!-- GASTOS -->
@@ -179,18 +210,15 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
         <div class="field" style="max-width:118px;"><label>Fecha</label><input type="date" id="g-date"></div>
         <div class="field" style="flex:2;"><label>Descripción</label><input type="text" id="g-desc" placeholder="Ej. Compra de vendas"></div>
         <div class="field"><label>Categoría</label>
-          <select id="g-cat"><option>Insumos</option><option>Equipo</option><option>Renta</option><option>Servicios</option><option>Publicidad</option><option>Otro</option></select>
-        </div>
+          <select id="g-cat"><option>Insumos</option><option>Equipo</option><option>Renta</option><option>Servicios</option><option>Publicidad</option><option>Otro</option></select></div>
         <div class="field" style="max-width:100px;"><label>Monto ($)</label><input type="number" id="g-amount" placeholder="0.00" min="0"></div>
         <button class="btn btn-g" onclick="addGasto()">+ Agregar</button>
       </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th style="width:80px">Fecha</th><th>Descripción</th><th style="width:90px">Categoría</th><th style="width:82px;text-align:right">Monto</th><th style="width:24px"></th></tr></thead>
-        <tbody id="g-body"><tr><td colspan="5" class="empty">Cargando...</td></tr></tbody>
-      </table>
-    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th style="width:80px">Fecha</th><th>Descripción</th><th style="width:90px">Categoría</th><th style="width:82px;text-align:right">Monto</th><th style="width:24px"></th></tr></thead>
+      <tbody id="g-body"><tr><td colspan="5" class="empty">Cargando...</td></tr></tbody>
+    </table></div>
   </div>
 
   <!-- PACIENTES -->
@@ -224,26 +252,20 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
       <div class="form-row">
         <div class="field" style="max-width:118px;"><label>Fecha</label><input type="date" id="c-date"></div>
         <div class="field" style="max-width:90px;"><label>Hora (24h)</label><input type="time" id="c-time"></div>
-        <div class="field" style="flex:2;">
-          <label>Paciente</label>
-          <select id="c-patient" onchange="onCitaFieldChange()"><option value="">— Selecciona paciente —</option></select>
-        </div>
-        <div class="field">
-          <label>Servicio</label>
+        <div class="field" style="flex:2;"><label>Paciente</label>
+          <select id="c-patient" onchange="onCitaFieldChange()"><option value="">— Selecciona paciente —</option></select></div>
+        <div class="field"><label>Servicio</label>
           <select id="c-serv" onchange="onCitaFieldChange()">
             <option>Terapia</option><option>Valoración</option><option>Descarga muscular</option>
             <option>Descarga completa</option><option>Plan de entrenamiento</option>
             <option>Paquete 5 sesiones</option><option>Paquete 10 sesiones</option><option>Otro</option>
-          </select>
-        </div>
+          </select></div>
         <div class="field"><label>Método de pago</label>
-          <select id="c-pay"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option><option>Otro</option></select>
-        </div>
+          <select id="c-pay"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta</option><option>Otro</option></select></div>
         <div class="field" style="max-width:105px;"><label>Monto ($)</label><input type="number" id="c-amount" placeholder="0.00" min="0"></div>
         <div id="tarifa-hint" class="tarifa-hint"></div>
         <div class="field"><label>Estado</label>
-          <select id="c-status"><option value="Pendiente">Pendiente</option><option value="Realizada">Realizada</option><option value="Cancelada">Cancelada</option></select>
-        </div>
+          <select id="c-status"><option value="Pendiente">Pendiente</option><option value="Realizada">Realizada</option><option value="Cancelada">Cancelada</option></select></div>
         <div class="field" style="flex:3;"><label>Notas</label><input type="text" id="c-notes" placeholder="Observaciones (opcional)"></div>
         <button class="btn btn-g" onclick="addCita()">+ Agendar</button>
       </div>
@@ -266,7 +288,7 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
       <div class="metric"><div class="lbl">Completados</div><div class="val pv" id="pq-completos">0</div></div>
       <div class="metric"><div class="lbl">Sesiones pendientes</div><div class="val av" id="pq-pendientes">0</div></div>
     </div>
-    <div id="pq-list"><div class="empty" style="padding:2rem 0;">Sin paquetes registrados.</div></div>
+    <div id="pq-list"><div class="empty" style="padding:2rem 0;">Sin paquetes registrados. Se crean al agendar citas con paquete.</div></div>
   </div>
 
   <!-- RESUMEN -->
@@ -303,536 +325,296 @@ tbody td{padding:7px 9px;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;wh
     </div>
   </div>
 </div>
+</div>
 
-<!-- Firebase SDK -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, getDocs, deleteDoc,
-  doc, updateDoc, onSnapshot, query, orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",
-  authDomain: "fisiocash.firebaseapp.com",
-  projectId: "fisiocash",
-  storageBucket: "fisiocash.firebasestorage.app",
-  messagingSenderId: "356983308627",
-  appId: "1:356983308627:web:3653c65a5f2a83df23a1a6",
-  measurementId: "G-67NEXY0LFW"
+const app=initializeApp({apiKey:"AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",authDomain:"fisiocash.firebaseapp.com",projectId:"fisiocash",storageBucket:"fisiocash.firebasestorage.app",messagingSenderId:"356983308627",appId:"1:356983308627:web:3653c65a5f2a83df23a1a6"});
+const auth=getAuth(app),db=getFirestore(app);
+let ingresos=[],gastos=[],pacientes=[],citas=[],paquetes=[],unsubs=[];
+const today=new Date().toISOString().split('T')[0];
+const TARIFAS={'Terapia':350,'Valoración':500,'Descarga muscular':350,'Descarga completa':500,'Plan de entrenamiento':400,'Paquete 5 sesiones':1450,'Paquete 10 sesiones':2800,'Otro':0};
+const PAQSES={'Paquete 5 sesiones':5,'Paquete 10 sesiones':10};
+const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const sC={'Terapia':'bg-teal','Valoración':'bg-blue','Descarga muscular':'bg-purple','Descarga completa':'bg-pink','Plan de entrenamiento':'bg-green','Paquete 5 sesiones':'bg-amber','Paquete 10 sesiones':'bg-amber','Otro':'bg-gray'};
+const catC={Insumos:'bg-green',Equipo:'bg-blue',Renta:'bg-amber',Servicios:'bg-purple',Publicidad:'bg-coral',Otro:'bg-coral'};
+const payC={Efectivo:'pay-badge-efectivo',Transferencia:'pay-badge-transferencia',Tarjeta:'pay-badge-tarjeta',Otro:'pay-badge-otro'};
+const stC={Realizada:'bg-green',Pendiente:'bg-amber',Cancelada:'bg-red'};
+const dotC={Realizada:'#1D9E75',Pendiente:'#BA7517',Cancelada:'#E24B4A'};
+const avBg=['#E1F5EE','#E6F1FB','#EEEDFE','#FAEEDA','#FAECE7'];
+const avFg=['#0F6E56','#185FA5','#534AB7','#854F0B','#993C1D'];
+
+const fmt=n=>'$'+Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+const dL=d=>{if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];};
+const mK=d=>d?d.substring(0,7):'';
+const ini=n=>n.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+const isP=s=>s==='Paquete 5 sesiones'||s==='Paquete 10 sesiones';
+const toast=msg=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);};
+const hl=id=>{const e=document.getElementById(id);e.style.borderColor='#E24B4A';setTimeout(()=>e.style.borderColor='',1500);};
+const setDates=()=>{['i-date','g-date','c-date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});const ct=document.getElementById('c-time');if(ct)ct.value='08:00';};
+
+/* AUTH */
+window.doLogin=async()=>{
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-password').value;
+  const btn=document.getElementById('login-btn');
+  const err=document.getElementById('login-error');
+  err.style.display='none';
+  if(!email||!pass){err.textContent='Ingresa tu correo y contraseña.';err.style.display='block';return;}
+  btn.disabled=true;btn.textContent='Entrando...';
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch(e){
+    const m={'auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Cuenta no encontrada.','auth/wrong-password':'Contraseña incorrecta.','auth/invalid-email':'Correo no válido.','auth/too-many-requests':'Demasiados intentos. Espera unos minutos.'};
+    err.textContent=m[e.code]||'Error al iniciar sesión.';
+    err.style.display='block';btn.disabled=false;btn.textContent='Entrar';
+  }
 };
+window.doLogout=async()=>{unsubs.forEach(u=>u());unsubs=[];ingresos=[];gastos=[];pacientes=[];citas=[];paquetes=[];await signOut(auth);};
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+onAuthStateChanged(auth,user=>{
+  const ld=document.getElementById('loading');
+  const ls=document.getElementById('login-screen');
+  const as=document.getElementById('app-screen');
+  const btn=document.getElementById('login-btn');
+  if(user){ls.style.display='none';as.style.display='block';ld.style.display='flex';btn.disabled=false;btn.textContent='Entrar';setDates();setupListeners();}
+  else{as.style.display='none';ls.style.display='flex';ld.style.display='none';}
+});
 
-// ─── Estado local (espejo de Firestore) ───
-let ingresos=[], gastos=[], pacientes=[], citas=[], paquetes=[];
-
-const today = new Date().toISOString().split('T')[0];
-['i-date','g-date','c-date'].forEach(id => document.getElementById(id).value = today);
-document.getElementById('c-time').value = '08:00';
-
-const TARIFAS = {'Terapia':350,'Valoración':500,'Descarga muscular':350,'Descarga completa':500,'Plan de entrenamiento':400,'Paquete 5 sesiones':1450,'Paquete 10 sesiones':2800,'Otro':0};
-const PAQUETE_SESIONES = {'Paquete 5 sesiones':5,'Paquete 10 sesiones':10};
-const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const servColors = {'Terapia':'bg-teal','Valoración':'bg-blue','Descarga muscular':'bg-purple','Descarga completa':'bg-pink','Plan de entrenamiento':'bg-green','Paquete 5 sesiones':'bg-amber','Paquete 10 sesiones':'bg-amber','Otro':'bg-gray'};
-const catColors = {Insumos:'bg-green',Equipo:'bg-blue',Renta:'bg-amber',Servicios:'bg-purple',Publicidad:'bg-coral',Otro:'bg-coral'};
-const payColors = {Efectivo:'pay-badge-efectivo',Transferencia:'pay-badge-transferencia',Tarjeta:'pay-badge-tarjeta',Otro:'pay-badge-otro'};
-const citaStatusColors = {Realizada:'bg-green',Pendiente:'bg-amber',Cancelada:'bg-red'};
-const dotColor = {Realizada:'#1D9E75',Pendiente:'#BA7517',Cancelada:'#E24B4A'};
-const avatarBg = ['#E1F5EE','#E6F1FB','#EEEDFE','#FAEEDA','#FAECE7'];
-const avatarFg = ['#0F6E56','#185FA5','#534AB7','#854F0B','#993C1D'];
-
-function fmt(n){return '$'+Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function dateLabel(d){if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
-function timeLabel(t){return t||'';}
-function monthKey(d){return d?d.substring(0,7):'';}
-function initials(n){return n.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();}
-function isPaquete(s){return s==='Paquete 5 sesiones'||s==='Paquete 10 sesiones';}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+function setupListeners(){
+  unsubs.push(
+    onSnapshot(query(collection(db,'ingresos'),orderBy('createdAt','desc')),s=>{ingresos=s.docs.map(d=>({id:d.id,...d.data()}));updMF('filter-mes',ingresos);renderIngresos();renderGastos();document.getElementById('loading').style.display='none';}),
+    onSnapshot(query(collection(db,'gastos'),orderBy('createdAt','desc')),s=>{gastos=s.docs.map(d=>({id:d.id,...d.data()}));renderGastos();}),
+    onSnapshot(query(collection(db,'pacientes'),orderBy('createdAt','desc')),s=>{pacientes=s.docs.map(d=>({id:d.id,...d.data()}));renderPacientes();refreshPS();}),
+    onSnapshot(query(collection(db,'citas'),orderBy('createdAt','desc')),s=>{citas=s.docs.map(d=>({id:d.id,...d.data()}));updMF('c-filter-mes',citas);renderCitas();renderPacientes();}),
+    onSnapshot(query(collection(db,'paquetes'),orderBy('createdAt','desc')),s=>{paquetes=s.docs.map(d=>({id:d.id,...d.data()}));renderPaquetes();})
+  );
 }
-function highlight(id){
-  const el=document.getElementById(id);
-  el.style.borderColor='#E24B4A';
-  setTimeout(()=>el.style.borderColor='',1500);
-}
-window.switchTab = function(id,el){
+
+window.switchTab=(id,el)=>{
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  el.classList.add('active');
-  if(id==='citas') refreshPatientSelect();
-  if(id==='paquetes') renderPaquetes();
-  if(id==='resumen') renderResumen();
+  document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');
+  if(id==='citas')refreshPS();if(id==='paquetes')renderPaquetes();if(id==='resumen')renderResumen();
 };
-function updateMonthFilter(selId,data){
-  const sel=document.getElementById(selId);
+function updMF(selId,data){
+  const sel=document.getElementById(selId);if(!sel)return;
   const cur=sel.value;
-  const keys=[...new Set(data.map(e=>monthKey(e.date)))].filter(Boolean).sort().reverse();
+  const keys=[...new Set(data.map(e=>mK(e.date)))].filter(Boolean).sort().reverse();
   sel.innerHTML='<option value="">Todos los meses</option>';
-  keys.forEach(k=>{
-    const [y,m]=k.split('-');
-    const opt=document.createElement('option');
-    opt.value=k; opt.textContent=meses[parseInt(m)-1]+' '+y;
-    if(k===cur) opt.selected=true;
-    sel.appendChild(opt);
-  });
+  keys.forEach(k=>{const[y,m]=k.split('-');const o=document.createElement('option');o.value=k;o.textContent=meses[parseInt(m)-1]+' '+y;if(k===cur)o.selected=true;sel.appendChild(o);});
 }
-function gcalLink(c){
-  const [y,mo,d]=c.date.split('-');
-  const [hh,mm]=(c.time||'08:00').split(':');
+function gcL(c){
+  const[y,mo,d]=c.date.split('-');const[hh,mm]=(c.time||'08:00').split(':');
   const pad=n=>String(n).padStart(2,'0');
-  const start=`${y}${mo}${d}T${pad(hh)}${pad(mm)}00`;
-  const endH=String((parseInt(hh)+1)%24).padStart(2,'0');
-  const end=`${y}${mo}${d}T${endH}${pad(mm)}00`;
-  const title=encodeURIComponent(`Cita: ${c.patient} — ${c.serv}`);
-  const details=encodeURIComponent(`Paciente: ${c.patient}\nServicio: ${c.serv}\nMonto: ${fmt(c.amount||0)}\nPago: ${c.pay||'—'}\n${c.notes||''}`);
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}`;
+  const s=`${y}${mo}${d}T${pad(hh)}${pad(mm)}00`;
+  const eH=String((parseInt(hh)+1)%24).padStart(2,'0');
+  const e=`${y}${mo}${d}T${eH}${pad(mm)}00`;
+  return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Cita: '+c.patient+' — '+c.serv)}&dates=${s}/${e}&details=${encodeURIComponent('Paciente: '+c.patient+'\nServicio: '+c.serv+'\nMonto: '+fmt(c.amount||0)+'\nPago: '+(c.pay||'—')+'\n'+(c.notes||''))}`;
 }
 
-// ─── Firestore listeners en tiempo real ───
-function setupListeners(){
-  onSnapshot(query(collection(db,'ingresos'),orderBy('createdAt','desc')), snap=>{
-    ingresos = snap.docs.map(d=>({id:d.id,...d.data()}));
-    updateMonthFilter('filter-mes',ingresos);
-    renderIngresos(); renderGastos();
-  });
-  onSnapshot(query(collection(db,'gastos'),orderBy('createdAt','desc')), snap=>{
-    gastos = snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderGastos();
-  });
-  onSnapshot(query(collection(db,'pacientes'),orderBy('createdAt','desc')), snap=>{
-    pacientes = snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderPacientes(); refreshPatientSelect();
-  });
-  onSnapshot(query(collection(db,'citas'),orderBy('createdAt','desc')), snap=>{
-    citas = snap.docs.map(d=>({id:d.id,...d.data()}));
-    updateMonthFilter('c-filter-mes',citas);
-    renderCitas(); renderPacientes();
-  });
-  onSnapshot(query(collection(db,'paquetes'),orderBy('createdAt','desc')), snap=>{
-    paquetes = snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderPaquetes();
-  });
-  document.getElementById('loading').style.display='none';
-}
-
-// ─── INGRESOS ───
-async function saveIngreso(obj){
-  const docRef = await addDoc(collection(db,'ingresos'),{...obj, createdAt: Date.now()});
-  return docRef.id;
-}
-window.addIngreso = async function(){
-  const date=document.getElementById('i-date').value;
-  const concept=document.getElementById('i-concept').value.trim();
-  const serv=document.getElementById('i-serv').value;
-  const pay=document.getElementById('i-pay').value;
-  const amount=parseFloat(document.getElementById('i-amount').value);
-  if(!date||!concept||isNaN(amount)||amount<=0){highlight('i-amount');return;}
-  await saveIngreso({date,concept,serv,pay,amount});
-  document.getElementById('i-concept').value='';
-  document.getElementById('i-amount').value='';
-  showToast('Ingreso guardado');
+/* INGRESOS */
+window.addIngreso=async()=>{
+  const date=document.getElementById('i-date').value,concept=document.getElementById('i-concept').value.trim(),serv=document.getElementById('i-serv').value,pay=document.getElementById('i-pay').value,amount=parseFloat(document.getElementById('i-amount').value);
+  if(!date||!concept||isNaN(amount)||amount<=0){hl('i-amount');return;}
+  await addDoc(collection(db,'ingresos'),{date,concept,serv,pay,amount,createdAt:Date.now()});
+  document.getElementById('i-concept').value='';document.getElementById('i-amount').value='';toast('Ingreso guardado');
 };
-window.delIngreso = async function(id){
-  await deleteDoc(doc(db,'ingresos',id));
-  showToast('Ingreso eliminado');
-};
+window.delIngreso=async id=>{await deleteDoc(doc(db,'ingresos',id));toast('Ingreso eliminado');};
 function renderIngresos(){
-  const mes=document.getElementById('filter-mes').value;
-  const serv=document.getElementById('filter-serv').value;
-  const pago=document.getElementById('filter-pago').value;
-  const f=ingresos.filter(e=>(!mes||monthKey(e.date)===mes)&&(!serv||e.serv===serv)&&(!pago||e.pay===pago));
+  const mes=document.getElementById('filter-mes').value,serv=document.getElementById('filter-serv').value,pago=document.getElementById('filter-pago').value;
+  const f=ingresos.filter(e=>(!mes||mK(e.date)===mes)&&(!serv||e.serv===serv)&&(!pago||e.pay===pago));
   const tot=f.reduce((s,e)=>s+e.amount,0);
-  document.getElementById('i-total').textContent=fmt(tot);
-  document.getElementById('i-reinv').textContent=fmt(tot*.6);
-  document.getElementById('i-salary').textContent=fmt(tot*.4);
-  document.getElementById('i-count').textContent=f.length+' registro'+(f.length!==1?'s':'');
+  document.getElementById('i-total').textContent=fmt(tot);document.getElementById('i-reinv').textContent=fmt(tot*.6);document.getElementById('i-salary').textContent=fmt(tot*.4);document.getElementById('i-count').textContent=f.length+' registro'+(f.length!==1?'s':'');
   const tb=document.getElementById('i-body');
   if(!f.length){tb.innerHTML='<tr><td colspan="8" class="empty">Sin registros para este filtro</td></tr>';return;}
-  tb.innerHTML=f.map(e=>`<tr>
-    <td style="color:#888">${dateLabel(e.date)}</td>
-    <td title="${e.concept}">${e.concept}</td>
-    <td><span class="badge ${servColors[e.serv]||'bg-gray'}">${e.serv||'—'}</span></td>
-    <td><span class="badge ${payColors[e.pay]||'pay-badge-otro'}">${e.pay||'—'}</span></td>
-    <td style="text-align:right;font-weight:600">${fmt(e.amount)}</td>
-    <td style="text-align:right;color:#854F0B">${fmt(e.amount*.6)}</td>
-    <td style="text-align:right;color:#534AB7">${fmt(e.amount*.4)}</td>
-    <td><button class="del-btn" onclick="delIngreso('${e.id}')">✕</button></td>
-  </tr>`).join('');
+  tb.innerHTML=f.map(e=>`<tr><td style="color:#888">${dL(e.date)}</td><td title="${e.concept}">${e.concept}</td><td><span class="badge ${sC[e.serv]||'bg-gray'}">${e.serv||'—'}</span></td><td><span class="badge ${payC[e.pay]||'pay-badge-otro'}">${e.pay||'—'}</span></td><td style="text-align:right;font-weight:600">${fmt(e.amount)}</td><td style="text-align:right;color:#854F0B">${fmt(e.amount*.6)}</td><td style="text-align:right;color:#534AB7">${fmt(e.amount*.4)}</td><td><button class="del-btn" onclick="delIngreso('${e.id}')">✕</button></td></tr>`).join('');
 }
 
-// ─── GASTOS ───
-window.addGasto = async function(){
-  const date=document.getElementById('g-date').value;
-  const desc=document.getElementById('g-desc').value.trim();
-  const cat=document.getElementById('g-cat').value;
-  const amount=parseFloat(document.getElementById('g-amount').value);
-  if(!date||!desc||isNaN(amount)||amount<=0){highlight('g-amount');return;}
+/* GASTOS */
+window.addGasto=async()=>{
+  const date=document.getElementById('g-date').value,desc=document.getElementById('g-desc').value.trim(),cat=document.getElementById('g-cat').value,amount=parseFloat(document.getElementById('g-amount').value);
+  if(!date||!desc||isNaN(amount)||amount<=0){hl('g-amount');return;}
   await addDoc(collection(db,'gastos'),{date,desc,cat,amount,createdAt:Date.now()});
-  document.getElementById('g-desc').value='';
-  document.getElementById('g-amount').value='';
-  showToast('Gasto guardado');
+  document.getElementById('g-desc').value='';document.getElementById('g-amount').value='';toast('Gasto guardado');
 };
-window.delGasto = async function(id){
-  await deleteDoc(doc(db,'gastos',id));
-  showToast('Gasto eliminado');
-};
+window.delGasto=async id=>{await deleteDoc(doc(db,'gastos',id));toast('Gasto eliminado');};
 function renderGastos(){
-  const totalIng=ingresos.reduce((s,e)=>s+e.amount,0);
-  const budget=totalIng*.6;
-  const totalGas=gastos.reduce((s,e)=>s+e.amount,0);
-  const avail=budget-totalGas;
-  const pct=budget>0?Math.min(100,Math.round(totalGas/budget*100)):0;
-  document.getElementById('g-total').textContent=fmt(totalGas);
-  document.getElementById('g-budget').textContent=fmt(budget);
-  document.getElementById('g-avail').textContent=fmt(avail);
-  document.getElementById('g-count').textContent=gastos.length+' registro'+(gastos.length!==1?'s':'');
-  document.getElementById('g-pct-sub').textContent=pct+'% del presupuesto usado';
-  document.getElementById('g-pct-lbl').textContent=pct+'%';
-  const prog=document.getElementById('g-prog');
-  prog.style.width=pct+'%'; prog.style.background=pct>90?'#E24B4A':pct>70?'#BA7517':'#1D9E75';
+  const tI=ingresos.reduce((s,e)=>s+e.amount,0),budget=tI*.6,tG=gastos.reduce((s,e)=>s+e.amount,0),pct=budget>0?Math.min(100,Math.round(tG/budget*100)):0;
+  document.getElementById('g-total').textContent=fmt(tG);document.getElementById('g-budget').textContent=fmt(budget);document.getElementById('g-avail').textContent=fmt(budget-tG);document.getElementById('g-count').textContent=gastos.length+' registro'+(gastos.length!==1?'s':'');document.getElementById('g-pct-sub').textContent=pct+'% del presupuesto usado';document.getElementById('g-pct-lbl').textContent=pct+'%';
+  const prog=document.getElementById('g-prog');prog.style.width=pct+'%';prog.style.background=pct>90?'#E24B4A':pct>70?'#BA7517':'#1D9E75';
   const tb=document.getElementById('g-body');
   if(!gastos.length){tb.innerHTML='<tr><td colspan="5" class="empty">Sin gastos registrados</td></tr>';return;}
-  tb.innerHTML=gastos.map(e=>`<tr>
-    <td style="color:#888">${dateLabel(e.date)}</td>
-    <td title="${e.desc}">${e.desc}</td>
-    <td><span class="badge ${catColors[e.cat]||'bg-coral'}">${e.cat}</span></td>
-    <td style="text-align:right;font-weight:600;color:#A32D2D">${fmt(e.amount)}</td>
-    <td><button class="del-btn" onclick="delGasto('${e.id}')">✕</button></td>
-  </tr>`).join('');
+  tb.innerHTML=gastos.map(e=>`<tr><td style="color:#888">${dL(e.date)}</td><td title="${e.desc}">${e.desc}</td><td><span class="badge ${catC[e.cat]||'bg-coral'}">${e.cat}</span></td><td style="text-align:right;font-weight:600;color:#A32D2D">${fmt(e.amount)}</td><td><button class="del-btn" onclick="delGasto('${e.id}')">✕</button></td></tr>`).join('');
 }
 
-// ─── PACIENTES ───
-window.addPaciente = async function(){
-  const name=document.getElementById('p-name').value.trim();
-  if(!name){highlight('p-name');return;}
-  const phone=document.getElementById('p-phone').value.trim();
-  const condition=document.getElementById('p-condition').value.trim();
+/* PACIENTES */
+window.addPaciente=async()=>{
+  const name=document.getElementById('p-name').value.trim();if(!name){hl('p-name');return;}
+  const phone=document.getElementById('p-phone').value.trim(),condition=document.getElementById('p-condition').value.trim();
   await addDoc(collection(db,'pacientes'),{name,phone,condition,createdAt:Date.now()});
-  ['p-name','p-phone','p-condition'].forEach(id=>document.getElementById(id).value='');
-  showToast('Paciente registrado');
+  ['p-name','p-phone','p-condition'].forEach(id=>document.getElementById(id).value='');toast('Paciente registrado');
 };
-window.delPaciente = async function(id){
-  await deleteDoc(doc(db,'pacientes',id));
-  showToast('Paciente eliminado');
-};
-function refreshPatientSelect(){
-  const sel=document.getElementById('c-patient');
-  const cur=sel.value;
-  sel.innerHTML='<option value="">— Selecciona paciente —</option>';
-  pacientes.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
-    const opt=document.createElement('option');
-    opt.value=p.name; opt.textContent=p.name;
-    if(p.name===cur) opt.selected=true;
-    sel.appendChild(opt);
-  });
+window.delPaciente=async id=>{await deleteDoc(doc(db,'pacientes',id));toast('Paciente eliminado');};
+function refreshPS(){
+  const sel=document.getElementById('c-patient');if(!sel)return;
+  const cur=sel.value;sel.innerHTML='<option value="">— Selecciona paciente —</option>';
+  pacientes.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{const o=document.createElement('option');o.value=p.name;o.textContent=p.name;if(p.name===cur)o.selected=true;sel.appendChild(o);});
 }
 function renderPacientes(){
-  const curMonth=today.substring(0,7);
-  const active=new Set(ingresos.filter(e=>monthKey(e.date)===curMonth).map(e=>e.concept.toLowerCase()));
+  const cM=today.substring(0,7),active=new Set(ingresos.filter(e=>mK(e.date)===cM).map(e=>e.concept.toLowerCase()));
   document.getElementById('p-count').textContent=pacientes.length;
   document.getElementById('p-active').textContent=pacientes.filter(p=>active.has(p.name.toLowerCase())).length;
   const wrap=document.getElementById('p-list-wrap');
   if(!pacientes.length){wrap.innerHTML='<div class="empty">Sin pacientes registrados</div>';return;}
   wrap.innerHTML='<div>'+pacientes.map((p,i)=>{
-    const ci=i%5;
-    const pc=citas.filter(c=>c.patient===p.name);
-    const last=pc[0];
-    const paqsP=paquetes.filter(pq=>pq.patient===p.name&&pq.sesionesUsadas<pq.sesionesTotal);
-    return `<div class="patient-row" onclick="togglePatientDetail('${p.id}')">
-      <div class="avatar" style="background:${avatarBg[ci]};color:${avatarFg[ci]}">${initials(p.name)}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
-        <div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.condition||'Sin padecimiento registrado'}</div>
-      </div>
-      <div style="text-align:right;min-width:90px;flex-shrink:0;">
-        ${p.phone?`<div style="font-size:11px;color:#888">${p.phone}</div>`:''}
-        <div style="font-size:10px;color:#aaa">${pc.length} cita${pc.length!==1?'s':''}</div>
-        ${paqsP.length?`<div style="font-size:10px;color:#854F0B;">${paqsP.length} paq. activo${paqsP.length!==1?'s':''}</div>`:''}
-      </div>
+    const ci=i%5,pc=citas.filter(c=>c.patient===p.name),last=pc[0],pqP=paquetes.filter(pq=>pq.patient===p.name&&pq.sesionesUsadas<pq.sesionesTotal);
+    return`<div class="patient-row" onclick="togglePD('${p.id}')">
+      <div class="avatar" style="background:${avBg[ci]};color:${avFg[ci]}">${ini(p.name)}</div>
+      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.condition||'Sin padecimiento registrado'}</div></div>
+      <div style="text-align:right;min-width:90px;flex-shrink:0;">${p.phone?`<div style="font-size:11px;color:#888">${p.phone}</div>`:''}<div style="font-size:10px;color:#aaa">${pc.length} cita${pc.length!==1?'s':''}</div>${pqP.length?`<div style="font-size:10px;color:#854F0B">${pqP.length} paq. activo${pqP.length!==1?'s':''}</div>`:''}</div>
       <button class="del-btn" onclick="event.stopPropagation();delPaciente('${p.id}')">✕</button>
     </div>
-    <div id="pdetail-${p.id}" style="display:none;background:#f9f9f5;padding:8px 13px;font-size:12px;border-bottom:1px solid #f0f0e8;color:#888;">
-      ${last?`Última cita: <strong style="color:#1a1a1a">${dateLabel(last.date)} ${timeLabel(last.time)}</strong> · ${last.serv} · <span class="badge ${citaStatusColors[last.status]||'bg-gray'}">${last.status}</span><br>`:'Sin citas registradas.<br>'}
-      ${paqsP.map(pq=>`<div style="margin-top:5px;">Paquete activo: <span class="badge bg-amber">${pq.serv}</span> <strong style="color:#854F0B">${pq.sesionesUsadas}/${pq.sesionesTotal}</strong> sesiones<div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${Math.round(pq.sesionesUsadas/pq.sesionesTotal*100)}%"></div></div></div>`).join('')}
+    <div id="pd-${p.id}" style="display:none;background:#f9f9f5;padding:8px 13px;font-size:12px;border-bottom:1px solid #f0f0e8;color:#888;">
+      ${last?`Última cita: <strong style="color:#1a1a1a">${dL(last.date)} ${last.time||''}</strong> · ${last.serv} · <span class="badge ${stC[last.status]||'bg-gray'}">${last.status}</span><br>`:'Sin citas registradas.<br>'}
+      ${pqP.map(pq=>`<div style="margin-top:5px;">Paquete: <span class="badge bg-amber">${pq.serv}</span> <strong style="color:#854F0B">${pq.sesionesUsadas}/${pq.sesionesTotal}</strong> sesiones<div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${Math.round(pq.sesionesUsadas/pq.sesionesTotal*100)}%"></div></div></div>`).join('')}
     </div>`;
   }).join('')+'</div>';
 }
-window.togglePatientDetail = function(id){
-  const el=document.getElementById('pdetail-'+id);
-  el.style.display=el.style.display==='none'?'block':'none';
-};
+window.togglePD=id=>{const e=document.getElementById('pd-'+id);if(e)e.style.display=e.style.display==='none'?'block':'none';};
 
-// ─── CITAS ───
-window.onCitaFieldChange = function(){
-  const serv=document.getElementById('c-serv').value;
-  const patient=document.getElementById('c-patient').value;
-  const tarifa=TARIFAS[serv]||0;
-  const hint=document.getElementById('tarifa-hint');
-  const aviso=document.getElementById('paq-aviso');
-  if(tarifa>0){
-    document.getElementById('c-amount').value=tarifa;
-    hint.textContent='Tarifa: '+fmt(tarifa);
-    hint.style.display='flex';
-  } else {
-    hint.style.display='none';
-  }
-  if(isPaquete(serv)&&patient){
-    const paqActivo=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
-    if(paqActivo){
-      const r=paqActivo.sesionesTotal-paqActivo.sesionesUsadas;
-      aviso.textContent=`Paquete activo: ${r} sesión${r!==1?'es':''} restante${r!==1?'s':''}. Se descontará de ese paquete.`;
-      aviso.style.display='block';
-    } else {
-      aviso.textContent=`Se creará un nuevo paquete de ${PAQUETE_SESIONES[serv]} sesiones.`;
-      aviso.style.display='block';
-    }
-  } else {
-    aviso.style.display='none';
-  }
+/* CITAS */
+window.onCitaFieldChange=()=>{
+  const serv=document.getElementById('c-serv').value,patient=document.getElementById('c-patient').value,tarifa=TARIFAS[serv]||0;
+  const hint=document.getElementById('tarifa-hint'),aviso=document.getElementById('paq-aviso');
+  if(tarifa>0){document.getElementById('c-amount').value=tarifa;hint.textContent='Tarifa: '+fmt(tarifa);hint.style.display='flex';}else{hint.style.display='none';}
+  if(isP(serv)&&patient){
+    const pa=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
+    if(pa){const r=pa.sesionesTotal-pa.sesionesUsadas;aviso.textContent=`Paquete activo: ${r} sesión${r!==1?'es':''} restante${r!==1?'s':''}.`;aviso.style.display='block';}
+    else{aviso.textContent=`Se creará un nuevo paquete de ${PAQSES[serv]} sesiones.`;aviso.style.display='block';}
+  }else{aviso.style.display='none';}
 };
-
-async function findOrCreatePaquete(patient,serv,fechaInicio){
-  const existing=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
-  if(existing) return existing;
-  const total=PAQUETE_SESIONES[serv];
-  const docRef=await addDoc(collection(db,'paquetes'),{patient,serv,sesionesTotal:total,sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null,createdAt:Date.now()});
-  return {id:docRef.id,patient,serv,sesionesTotal:total,sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null};
+async function fOCP(patient,serv,fechaInicio){
+  const ex=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
+  if(ex)return ex;
+  const total=PAQSES[serv];
+  const r=await addDoc(collection(db,'paquetes'),{patient,serv,sesionesTotal:total,sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null,createdAt:Date.now()});
+  return{id:r.id,patient,serv,sesionesTotal:total,sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null};
 }
-async function addSesionAPaquete(patient,serv,fecha,citaId){
-  const paq=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
-  if(paq){
-    const nuevas=[...paq.sesiones,{fecha,citaId,num:paq.sesionesUsadas+1}];
-    await updateDoc(doc(db,'paquetes',paq.id),{sesionesUsadas:paq.sesionesUsadas+1,sesiones:nuevas});
-    return paq;
-  }
+async function addSP(patient,serv,fecha,citaId){
+  const pq=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
+  if(pq){const n=[...(pq.sesiones||[]),{fecha,citaId,num:pq.sesionesUsadas+1}];await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:pq.sesionesUsadas+1,sesiones:n});return pq;}
   return null;
 }
-async function removeSesionDePaquete(citaId){
-  for(const paq of paquetes){
-    const idx=paq.sesiones.findIndex(s=>s.citaId===citaId);
-    if(idx>-1){
-      const nuevas=paq.sesiones.filter(s=>s.citaId!==citaId);
-      await updateDoc(doc(db,'paquetes',paq.id),{sesionesUsadas:Math.max(0,paq.sesionesUsadas-1),sesiones:nuevas});
-    }
+async function remSP(citaId){
+  for(const pq of paquetes){
+    if(!(pq.sesiones||[]).find(s=>s.citaId===citaId))continue;
+    const n=(pq.sesiones||[]).filter(s=>s.citaId!==citaId);
+    await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:Math.max(0,pq.sesionesUsadas-1),sesiones:n});
   }
 }
-
-window.addCita = async function(){
-  const date=document.getElementById('c-date').value;
-  const time=document.getElementById('c-time').value;
-  const patient=document.getElementById('c-patient').value;
-  const serv=document.getElementById('c-serv').value;
-  const pay=document.getElementById('c-pay').value;
-  const amount=parseFloat(document.getElementById('c-amount').value)||0;
-  const status=document.getElementById('c-status').value;
-  const notes=document.getElementById('c-notes').value.trim();
-  if(!date||!patient){highlight(!date?'c-date':'c-patient');return;}
-
+window.addCita=async()=>{
+  const date=document.getElementById('c-date').value,time=document.getElementById('c-time').value,patient=document.getElementById('c-patient').value,serv=document.getElementById('c-serv').value,pay=document.getElementById('c-pay').value,amount=parseFloat(document.getElementById('c-amount').value)||0,status=document.getElementById('c-status').value,notes=document.getElementById('c-notes').value.trim();
+  if(!date||!patient){hl(!date?'c-date':'c-patient');return;}
   let ingresoId=null;
-  if(isPaquete(serv)){
-    const paq=await findOrCreatePaquete(patient,serv,date);
-    if(status==='Realizada'){
-      await addSesionAPaquete(patient,serv,date,'__temp__');
+  if(isP(serv)){
+    const pq=await fOCP(patient,serv,date);
+    if(status==='Realizada'&&amount>0&&!pq.ingresoId){
+      const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});
+      ingresoId=ir.id;await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});toast('Paquete registrado + ingreso añadido');
     }
-    if(status==='Realizada'&&amount>0&&!paq.ingresoId){
-      const ingRef=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});
-      ingresoId=ingRef.id;
-      await updateDoc(doc(db,'paquetes',paq.id),{ingresoId:ingRef.id});
-      showToast('Paquete registrado + ingreso añadido');
-    }
-  } else if(status==='Realizada'&&amount>0){
-    const ingRef=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});
-    ingresoId=ingRef.id;
-    showToast('Cita realizada — ingreso registrado: '+fmt(amount));
+  }else if(status==='Realizada'&&amount>0){
+    const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});
+    ingresoId=ir.id;toast('Cita realizada — ingreso: '+fmt(amount));
   }
-
-  const citaRef=await addDoc(collection(db,'citas'),{date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:Date.now()});
-  if(isPaquete(serv)&&status==='Realizada'){
-    await removeSesionDePaquete('__temp__');
-    await addSesionAPaquete(patient,serv,date,citaRef.id);
-  }
-
-  document.getElementById('c-patient').value='';
-  document.getElementById('c-amount').value='';
-  document.getElementById('c-notes').value='';
-  document.getElementById('c-status').value='Pendiente';
-  document.getElementById('tarifa-hint').style.display='none';
-  document.getElementById('paq-aviso').style.display='none';
-  if(status!=='Realizada') showToast('Cita agendada');
+  const cr=await addDoc(collection(db,'citas'),{date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:Date.now()});
+  if(isP(serv)&&status==='Realizada')await addSP(patient,serv,date,cr.id);
+  if(status!=='Realizada')toast('Cita agendada');
+  document.getElementById('c-patient').value='';document.getElementById('c-amount').value='';document.getElementById('c-notes').value='';document.getElementById('c-status').value='Pendiente';document.getElementById('tarifa-hint').style.display='none';document.getElementById('paq-aviso').style.display='none';
 };
-
-window.delCita = async function(id){
+window.delCita=async id=>{
   const c=citas.find(c=>c.id===id);
-  if(c){
-    if(c.ingresoId) await deleteDoc(doc(db,'ingresos',c.ingresoId));
-    if(isPaquete(c.serv)&&c.status==='Realizada') await removeSesionDePaquete(id);
-  }
-  await deleteDoc(doc(db,'citas',id));
-  showToast('Cita eliminada');
+  if(c){if(c.ingresoId)await deleteDoc(doc(db,'ingresos',c.ingresoId));if(isP(c.serv)&&c.status==='Realizada')await remSP(id);}
+  await deleteDoc(doc(db,'citas',id));toast('Cita eliminada');
 };
-
-window.updateCitaStatus = async function(id,val){
-  const c=citas.find(c=>c.id===id);
-  if(!c) return;
-  const prev=c.status;
-  await updateDoc(doc(db,'citas',id),{status:val});
-
+window.updateCitaStatus=async(id,val)=>{
+  const c=citas.find(c=>c.id===id);if(!c)return;
+  const prev=c.status;await updateDoc(doc(db,'citas',id),{status:val});
   if(val==='Realizada'&&prev!=='Realizada'){
-    if(isPaquete(c.serv)){
-      await addSesionAPaquete(c.patient,c.serv,c.date,c.id);
-      const paq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);
-      if(paq&&!paq.ingresoId&&c.amount>0){
-        const ingRef=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});
-        await updateDoc(doc(db,'paquetes',paq.id),{ingresoId:ingRef.id});
-        await updateDoc(doc(db,'citas',id),{ingresoId:ingRef.id});
-        showToast('Paquete activo — ingreso registrado');
-      } else {
-        const u=paq?paq.sesionesUsadas:1;const t=paq?paq.sesionesTotal:'?';
-        showToast(`Sesión ${u}/${t} del paquete registrada`);
-      }
-    } else if(c.amount>0&&!c.ingresoId){
-      const ingRef=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});
-      await updateDoc(doc(db,'citas',id),{ingresoId:ingRef.id});
-      showToast('Ingreso registrado — '+fmt(c.amount));
+    if(isP(c.serv)){
+      await addSP(c.patient,c.serv,c.date,c.id);
+      const pq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);
+      if(pq&&!pq.ingresoId&&c.amount>0){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso de paquete registrado');}
+      else{const u=pq?pq.sesionesUsadas+1:1,t=pq?pq.sesionesTotal:'?';toast(`Sesión ${u}/${t} registrada`);}
+    }else if(c.amount>0&&!c.ingresoId){
+      const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});
+      await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso registrado — '+fmt(c.amount));
     }
   }
   if((val==='Cancelada'||val==='Pendiente')&&prev==='Realizada'){
-    if(isPaquete(c.serv)) await removeSesionDePaquete(id);
-    if(c.ingresoId){
-      await deleteDoc(doc(db,'ingresos',c.ingresoId));
-      await updateDoc(doc(db,'citas',id),{ingresoId:null});
-      const paq=paquetes.find(p=>p.ingresoId===c.ingresoId);
-      if(paq) await updateDoc(doc(db,'paquetes',paq.id),{ingresoId:null});
-      showToast('Ingreso revertido');
-    }
+    if(isP(c.serv))await remSP(id);
+    if(c.ingresoId){await deleteDoc(doc(db,'ingresos',c.ingresoId));await updateDoc(doc(db,'citas',id),{ingresoId:null});const pq=paquetes.find(p=>p.ingresoId===c.ingresoId);if(pq)await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:null});toast('Ingreso revertido');}
   }
 };
-
 function renderCitas(){
-  const fSt=document.getElementById('c-filter-status').value;
-  const fMes=document.getElementById('c-filter-mes').value;
-  const f=citas.filter(c=>(!fSt||c.status===fSt)&&(!fMes||monthKey(c.date)===fMes));
-  document.getElementById('c-total').textContent=citas.length;
-  document.getElementById('c-done').textContent=citas.filter(c=>c.status==='Realizada').length;
-  document.getElementById('c-pend').textContent=citas.filter(c=>c.status==='Pendiente').length;
-  document.getElementById('c-canc').textContent=citas.filter(c=>c.status==='Cancelada').length;
+  const fS=document.getElementById('c-filter-status').value,fM=document.getElementById('c-filter-mes').value;
+  const f=citas.filter(c=>(!fS||c.status===fS)&&(!fM||mK(c.date)===fM));
+  document.getElementById('c-total').textContent=citas.length;document.getElementById('c-done').textContent=citas.filter(c=>c.status==='Realizada').length;document.getElementById('c-pend').textContent=citas.filter(c=>c.status==='Pendiente').length;document.getElementById('c-canc').textContent=citas.filter(c=>c.status==='Cancelada').length;
   const wrap=document.getElementById('c-list');
   if(!f.length){wrap.innerHTML='<div class="table-wrap"><div class="empty">Sin citas para este filtro</div></div>';return;}
   wrap.innerHTML='<div class="table-wrap"><div>'+f.map(c=>{
-    const paq=isPaquete(c.serv)?paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv):null;
-    const sesIdx=paq?paq.sesiones.findIndex(s=>s.citaId===c.id):-1;
-    const sesInfo=paq&&sesIdx>=0?` · Sesión ${sesIdx+1}/${paq.sesionesTotal}`:'';
-    return `<div class="cita-card">
-      <div style="display:flex;align-items:flex-start;gap:9px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:${dotColor[c.status]||'#888'};flex-shrink:0;margin-top:4px;"></div>
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <span style="font-weight:600;font-size:13px;">${c.patient}</span>
-            <span class="badge ${servColors[c.serv]||'bg-gray'}">${c.serv}</span>
-            <span class="badge ${citaStatusColors[c.status]||'bg-gray'}">${c.status}</span>
-            ${c.amount>0&&!isPaquete(c.serv)?`<span class="badge ${payColors[c.pay]||'pay-badge-otro'}">${c.pay} · ${fmt(c.amount)}</span>`:''}
-            ${sesInfo?`<span class="badge bg-amber">${sesInfo.trim()}</span>`:''}
-          </div>
-          <div style="color:#888;font-size:11px;margin-top:2px;">${dateLabel(c.date)}${c.time?' · '+timeLabel(c.time):''}</div>
-          ${c.notes?`<div style="color:#aaa;font-size:11px;margin-top:1px;">${c.notes}</div>`:''}
-        </div>
-        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;">
-          <select onchange="updateCitaStatus('${c.id}',this.value)" style="font-size:11px;padding:3px 5px;border-radius:8px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;">
-            <option ${c.status==='Pendiente'?'selected':''}>Pendiente</option>
-            <option ${c.status==='Realizada'?'selected':''}>Realizada</option>
-            <option ${c.status==='Cancelada'?'selected':''}>Cancelada</option>
-          </select>
-          <div style="display:flex;gap:5px;">
-            <a href="${gcalLink(c)}" target="_blank" class="btn-gcal">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Google Cal
-            </a>
-            <button class="del-btn" onclick="delCita('${c.id}')">✕</button>
-          </div>
-        </div>
+    const pq=isP(c.serv)?paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv):null;
+    const si=pq?(pq.sesiones||[]).findIndex(s=>s.citaId===c.id):-1;
+    const sI=si>=0?`Sesión ${si+1}/${pq.sesionesTotal}`:'';
+    return`<div class="cita-card"><div style="display:flex;align-items:flex-start;gap:9px;">
+      <div style="width:8px;height:8px;border-radius:50%;background:${dotC[c.status]||'#888'};flex-shrink:0;margin-top:4px;"></div>
+      <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="font-weight:600;font-size:13px;">${c.patient}</span><span class="badge ${sC[c.serv]||'bg-gray'}">${c.serv}</span><span class="badge ${stC[c.status]||'bg-gray'}">${c.status}</span>${c.amount>0&&!isP(c.serv)?`<span class="badge ${payC[c.pay]||'pay-badge-otro'}">${c.pay} · ${fmt(c.amount)}</span>`:''}${sI?`<span class="badge bg-amber">${sI}</span>`:''}</div>
+      <div style="color:#888;font-size:11px;margin-top:2px;">${dL(c.date)}${c.time?' · '+c.time:''}</div>${c.notes?`<div style="color:#aaa;font-size:11px;margin-top:1px;">${c.notes}</div>`:''}</div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;">
+        <select onchange="updateCitaStatus('${c.id}',this.value)" style="font-size:11px;padding:3px 5px;border-radius:8px;border:1px solid #ddd;background:#f9f9f5;color:#1a1a1a;"><option ${c.status==='Pendiente'?'selected':''}>Pendiente</option><option ${c.status==='Realizada'?'selected':''}>Realizada</option><option ${c.status==='Cancelada'?'selected':''}>Cancelada</option></select>
+        <div style="display:flex;gap:5px;"><a href="${gcL(c)}" target="_blank" class="btn-gcal"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Google Cal</a><button class="del-btn" onclick="delCita('${c.id}')">✕</button></div>
       </div>
-    </div>`;
+    </div></div>`;
   }).join('')+'</div></div>';
 }
 
-// ─── PAQUETES ───
+/* PAQUETES */
 function renderPaquetes(){
-  const activos=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).length;
-  const completos=paquetes.filter(p=>p.sesionesUsadas>=p.sesionesTotal).length;
-  const pendSes=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).reduce((s,p)=>s+(p.sesionesTotal-p.sesionesUsadas),0);
-  document.getElementById('pq-activos').textContent=activos;
-  document.getElementById('pq-completos').textContent=completos;
-  document.getElementById('pq-pendientes').textContent=pendSes;
+  const act=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).length,comp=paquetes.filter(p=>p.sesionesUsadas>=p.sesionesTotal).length,pend=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).reduce((s,p)=>s+(p.sesionesTotal-p.sesionesUsadas),0);
+  document.getElementById('pq-activos').textContent=act;document.getElementById('pq-completos').textContent=comp;document.getElementById('pq-pendientes').textContent=pend;
   const wrap=document.getElementById('pq-list');
-  if(!paquetes.length){wrap.innerHTML='<div class="empty" style="padding:2rem 0;">Sin paquetes. Se crean automáticamente al agendar una cita con paquete.</div>';return;}
-  wrap.innerHTML=paquetes.map(paq=>{
-    const pct=Math.round(paq.sesionesUsadas/paq.sesionesTotal*100);
-    const completado=paq.sesionesUsadas>=paq.sesionesTotal;
-    const sesHTML=paq.sesiones&&paq.sesiones.length?paq.sesiones.map(s=>`
-      <div class="paq-sesion-row">
-        <div style="width:20px;height:20px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#0F6E56;flex-shrink:0;">${s.num}</div>
-        <span style="color:#888;">${dateLabel(s.fecha)}</span>
-        <span class="badge bg-green" style="margin-left:auto;">Realizada</span>
-      </div>`).join(''):'<div style="font-size:12px;color:#aaa;padding:6px 0;">Sin sesiones realizadas aún.</div>';
-    return `<div class="paq-card">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <div class="avatar" style="background:${completado?'#EAF3DE':'#FAEEDA'};color:${completado?'#3B6D11':'#854F0B'}">${initials(paq.patient)}</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;font-weight:500;">${paq.patient}</div>
-          <div style="font-size:11px;color:#888;">${paq.serv} · desde ${dateLabel(paq.fechaInicio)}</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <span class="badge ${completado?'bg-green':'bg-amber'}">${completado?'Completado':'Activo'}</span>
-          <div style="font-size:13px;font-weight:600;color:${completado?'#0F6E56':'#854F0B'};margin-top:3px;">${paq.sesionesUsadas}/${paq.sesionesTotal} sesiones</div>
-        </div>
-      </div>
-      <div class="prog-labels"><span style="font-size:11px;">Progreso</span><span style="font-size:11px;">${pct}%</span></div>
-      <div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${pct}%;background:${completado?'#1D9E75':'#BA7517'};"></div></div>
-      <div style="margin-top:8px;">${sesHTML}</div>
-    </div>`;
+  if(!paquetes.length){wrap.innerHTML='<div class="empty" style="padding:2rem 0;">Sin paquetes. Se crean al agendar citas con paquete.</div>';return;}
+  wrap.innerHTML=paquetes.map(pq=>{
+    const pct=Math.round(pq.sesionesUsadas/pq.sesionesTotal*100),done=pq.sesionesUsadas>=pq.sesionesTotal;
+    const sesH=(pq.sesiones||[]).length?(pq.sesiones||[]).map(s=>`<div class="paq-sesion-row"><div style="width:20px;height:20px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#0F6E56;flex-shrink:0;">${s.num}</div><span style="color:#888;">${dL(s.fecha)}</span><span class="badge bg-green" style="margin-left:auto;">Realizada</span></div>`).join(''):'<div style="font-size:12px;color:#aaa;padding:6px 0;">Sin sesiones aún.</div>';
+    return`<div class="paq-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div class="avatar" style="background:${done?'#EAF3DE':'#FAEEDA'};color:${done?'#3B6D11':'#854F0B'}">${ini(pq.patient)}</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;">${pq.patient}</div><div style="font-size:11px;color:#888;">${pq.serv} · desde ${dL(pq.fechaInicio)}</div></div><div style="text-align:right;flex-shrink:0;"><span class="badge ${done?'bg-green':'bg-amber'}">${done?'Completado':'Activo'}</span><div style="font-size:13px;font-weight:600;color:${done?'#0F6E56':'#854F0B'};margin-top:3px;">${pq.sesionesUsadas}/${pq.sesionesTotal}</div></div></div><div class="prog-labels"><span style="font-size:11px;">Progreso</span><span style="font-size:11px;">${pct}%</span></div><div class="paq-bar-bg"><div class="paq-bar-fill" style="width:${pct}%;background:${done?'#1D9E75':'#BA7517'};"></div></div><div style="margin-top:8px;">${sesH}</div></div>`;
   }).join('');
 }
 
-// ─── RESUMEN ───
-window.renderResumen = function(){
-  const totalIng=ingresos.reduce((s,e)=>s+e.amount,0);
-  const totalGas=gastos.reduce((s,e)=>s+e.amount,0);
-  const salary=totalIng*.4;
-  document.getElementById('r-ing').textContent=fmt(totalIng);
-  document.getElementById('r-gas').textContent=fmt(totalGas);
-  document.getElementById('r-sal').textContent=fmt(salary);
-  document.getElementById('r-bar-lbl').textContent='Distribución de '+fmt(totalIng);
-  const pctG=totalIng>0?Math.min(100,totalGas/totalIng*100):0;
-  const pctS=totalIng>0?Math.min(100,salary/totalIng*100):0;
-  document.getElementById('r-bar-gas').style.width=pctG.toFixed(1)+'%';
-  document.getElementById('r-bar-sal').style.width=pctS.toFixed(1)+'%';
+/* RESUMEN */
+window.renderResumen=()=>{
+  const tI=ingresos.reduce((s,e)=>s+e.amount,0),tG=gastos.reduce((s,e)=>s+e.amount,0),sal=tI*.4;
+  document.getElementById('r-ing').textContent=fmt(tI);document.getElementById('r-gas').textContent=fmt(tG);document.getElementById('r-sal').textContent=fmt(sal);
+  document.getElementById('r-bar-lbl').textContent='Distribución de '+fmt(tI);
+  document.getElementById('r-bar-gas').style.width=(tI>0?Math.min(100,tG/tI*100):0).toFixed(1)+'%';
+  document.getElementById('r-bar-sal').style.width=(tI>0?Math.min(100,sal/tI*100):0).toFixed(1)+'%';
   const servs={};ingresos.forEach(i=>{servs[i.serv||'Otro']=(servs[i.serv||'Otro']||0)+i.amount;});
   const rsd=document.getElementById('r-serv-breakdown');
-  if(!Object.keys(servs).length){rsd.textContent='Sin datos aún.';}
-  else rsd.innerHTML=Object.entries(servs).sort((a,b)=>b[1]-a[1]).map(([s,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${servColors[s]||'bg-gray'}">${s}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${totalIng>0?Math.round(a/totalIng*100):0}%</span></div>`).join('');
+  if(!Object.keys(servs).length)rsd.textContent='Sin datos aún.';
+  else rsd.innerHTML=Object.entries(servs).sort((a,b)=>b[1]-a[1]).map(([s,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${sC[s]||'bg-gray'}">${s}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${tI>0?Math.round(a/tI*100):0}%</span></div>`).join('');
   const pays={};ingresos.forEach(i=>{pays[i.pay||'Otro']=(pays[i.pay||'Otro']||0)+i.amount;});
   const rpd=document.getElementById('r-pay-breakdown');
-  if(!Object.keys(pays).length){rpd.textContent='Sin datos aún.';}
-  else rpd.innerHTML=Object.entries(pays).sort((a,b)=>b[1]-a[1]).map(([p,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${payColors[p]||'pay-badge-otro'}">${p}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${totalIng>0?Math.round(a/totalIng*100):0}%</span></div>`).join('');
+  if(!Object.keys(pays).length)rpd.textContent='Sin datos aún.';
+  else rpd.innerHTML=Object.entries(pays).sort((a,b)=>b[1]-a[1]).map(([p,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${payC[p]||'pay-badge-otro'}">${p}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${tI>0?Math.round(a/tI*100):0}%</span></div>`).join('');
   const cats={};gastos.forEach(g=>{cats[g.cat]=(cats[g.cat]||0)+g.amount;});
-  const bd=document.getElementById('r-cat-breakdown');const budget=totalIng*.6;
-  if(!Object.keys(cats).length){bd.textContent='Sin gastos registrados aún.';}
-  else bd.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${catColors[c]||'bg-coral'}">${c}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${budget>0?Math.round(a/budget*100):0}%</span></div>`).join('');
-  const curM=today.substring(0,7);const mc=citas.filter(c=>monthKey(c.date)===curM);
-  document.getElementById('r-c-total').textContent=mc.length;
-  document.getElementById('r-c-done').textContent=mc.filter(c=>c.status==='Realizada').length;
-  document.getElementById('r-c-pend').textContent=mc.filter(c=>c.status==='Pendiente').length;
-  document.getElementById('r-c-canc').textContent=mc.filter(c=>c.status==='Cancelada').length;
+  const bd=document.getElementById('r-cat-breakdown'),budget=tI*.6;
+  if(!Object.keys(cats).length)bd.textContent='Sin gastos aún.';
+  else bd.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span><span class="badge ${catC[c]||'bg-coral'}">${c}</span></span><span style="font-weight:600;">${fmt(a)}</span><span style="color:#aaa;">${budget>0?Math.round(a/budget*100):0}%</span></div>`).join('');
+  const cM=today.substring(0,7),mc=citas.filter(c=>mK(c.date)===cM);
+  document.getElementById('r-c-total').textContent=mc.length;document.getElementById('r-c-done').textContent=mc.filter(c=>c.status==='Realizada').length;document.getElementById('r-c-pend').textContent=mc.filter(c=>c.status==='Pendiente').length;document.getElementById('r-c-canc').textContent=mc.filter(c=>c.status==='Cancelada').length;
 };
-
-// ─── Iniciar ───
-setupListeners();
 </script>
 </body>
 </html>
