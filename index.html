@@ -440,7 +440,12 @@ function setupListeners(){
       e=>toast('Error al cargar pacientes: '+e.message,true)
     ),
     onSnapshot(query(collection(db,'citas'),orderBy('createdAt','desc')),
-      s=>{citas=s.docs.map(d=>({id:d.id,...d.data()}));updMF('c-filter-mes',citas);renderCitas();renderPacientes();},
+      s=>{
+        citas=s.docs.map(d=>({id:d.id,...d.data()}));
+        updMF('c-filter-mes',citas);
+        renderCitas();
+        renderPacientes();
+      },
       e=>toast('Error al cargar citas: '+e.message,true)
     ),
     onSnapshot(query(collection(db,'paquetes'),orderBy('createdAt','desc')),
@@ -625,11 +630,18 @@ window.updateCitaStatus=async(id,val)=>{
   }catch(e){toast('Error al actualizar cita: '+e.message,true);}
 };
 function renderCitas(){
-  const fS=document.getElementById('c-filter-status').value,fM=document.getElementById('c-filter-mes').value;
+  /* Contadores: siempre con el total real, independiente de filtros */
+  document.getElementById('c-total').textContent=citas.length;
+  document.getElementById('c-done').textContent=citas.filter(c=>c.status==='Realizada').length;
+  document.getElementById('c-pend').textContent=citas.filter(c=>c.status==='Pendiente').length;
+  document.getElementById('c-canc').textContent=citas.filter(c=>c.status==='Cancelada').length;
+  /* Filtros: leer con fallback a '' si el elemento aún no existe */
+  const fSEl=document.getElementById('c-filter-status'),fMEl=document.getElementById('c-filter-mes');
+  const fS=fSEl?fSEl.value:'',fM=fMEl?fMEl.value:'';
   const f=citas.filter(c=>(!fS||c.status===fS)&&(!fM||mK(c.date)===fM));
-  document.getElementById('c-total').textContent=citas.length;document.getElementById('c-done').textContent=citas.filter(c=>c.status==='Realizada').length;document.getElementById('c-pend').textContent=citas.filter(c=>c.status==='Pendiente').length;document.getElementById('c-canc').textContent=citas.filter(c=>c.status==='Cancelada').length;
   const wrap=document.getElementById('c-list');
-  if(!f.length){wrap.innerHTML='<div class="table-wrap"><div class="empty">Sin citas para este filtro</div></div>';return;}
+  if(!wrap)return;
+  if(!f.length){wrap.innerHTML='<div class="table-wrap"><div class="empty">'+(citas.length?'Sin citas para este filtro':'Sin citas agendadas')+'</div></div>';return;}
   wrap.innerHTML='<div class="table-wrap"><div>'+f.map(c=>{
     const pq=isP(c.serv)?paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv):null;
     const si=pq?(pq.sesiones||[]).findIndex(s=>s.citaId===c.id):-1,sI=si>=0?`Sesión ${si+1}/${pq.sesionesTotal}`:'';
