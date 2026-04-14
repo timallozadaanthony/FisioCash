@@ -11,17 +11,6 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#0C213C;min-height:100vh;}
-
-/* ── PALETA ──
-  Primary dark:   #0C213C  (navy oscuro)
-  Primary mid:    #2A4057  (azul pizarra)
-  Primary blue:   #254E7A  (azul marino)
-  Light blue:     #CBE3EF  (azul cielo)
-  Gray:           #ACACAC  (gris neutro)
-  Background:     #f0f4f8  (casi blanco azulado)
-*/
-
-/* LOGIN */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;background:linear-gradient(160deg,#0C213C 0%,#254E7A 100%);}
 .login-card{background:#fff;border-radius:20px;padding:2.5rem 2rem 2rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(12,33,60,0.35);}
 .login-brand{text-align:center;margin-bottom:2rem;}
@@ -37,27 +26,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .login-btn:disabled{background:#ACACAC;cursor:not-allowed;}
 .login-error{font-size:12px;color:#8B1C1C;background:#FDEAEA;border-radius:8px;padding:9px 12px;margin-top:10px;display:none;}
 .login-footer{text-align:center;font-size:11px;color:#ACACAC;margin-top:1.25rem;}
-
-/* APP */
 #app-screen{display:none;}
 .app{padding:1.5rem 1.25rem;max-width:1000px;margin:0 auto;}
-
-/* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid #CBE3EF;}
 .brand-name{font-size:36px;font-weight:800;color:#0C213C;letter-spacing:-1px;}
 .brand-name span{color:#254E7A;}
 .logout-btn{font-size:12px;color:#2A4057;background:#fff;border:1.5px solid #CBE3EF;border-radius:8px;padding:7px 14px;cursor:pointer;font-weight:500;transition:all .2s;}
 .logout-btn:hover{background:#0C213C;color:#fff;border-color:#0C213C;}
-
-/* TABS */
 .tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:#fff;padding:5px;border-radius:14px;border:1.5px solid #CBE3EF;flex-wrap:wrap;}
 .tab{padding:9px 16px;font-size:13px;cursor:pointer;color:#2A4057;border:none;background:none;border-radius:10px;font-weight:500;transition:all .2s;}
 .tab:hover{background:#CBE3EF;color:#0C213C;}
 .tab.active{background:#0C213C;color:#fff;font-weight:600;}
-
 .panel{display:none;}.panel.active{display:block;}
-
-/* METRICS */
 .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:1.25rem;}
 .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:1.25rem;}
 .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.25rem;}
@@ -65,9 +45,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .metric .lbl{font-size:12px;color:#ACACAC;margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
 .metric .val{font-size:26px;font-weight:700;color:#0C213C;}
 .metric .sub{font-size:11px;color:#ACACAC;margin-top:3px;}
-.tv{color:#254E7A!important;}.av{color:#2A4057!important;}.pv{color:#254E7A!important;}.rv{color:#8B1C1C!important;}.bv{color:#2A4057!important;}
-
-/* CARDS */
+.tv{color:#1a7a3a!important;}
+.av{color:#2A4057!important;}.pv{color:#254E7A!important;}.rv{color:#8B1C1C!important;}.bv{color:#2A4057!important;}
 .card{background:#fff;border:1.5px solid #CBE3EF;border-radius:14px;padding:1.1rem 1.3rem;margin-bottom:1rem;}
 .card-title{font-size:14px;font-weight:700;color:#0C213C;margin-bottom:11px;letter-spacing:0.2px;}
 .form-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
@@ -76,14 +55,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .field input,.field select{font-size:13px;padding:8px 10px;border-radius:8px;border:1.5px solid #CBE3EF;background:#f7fafc;color:#0C213C;outline:none;}
 .field input:focus,.field select:focus{border-color:#254E7A;background:#fff;}
 .tarifa-hint{font-size:12px;color:#254E7A;font-weight:600;padding:6px 10px;background:#CBE3EF;border-radius:8px;display:none;align-items:center;height:34px;white-space:nowrap;}
-
-/* BUTTONS */
 .btn{border:none;border-radius:8px;padding:7px 16px;font-size:13px;cursor:pointer;height:34px;white-space:nowrap;font-weight:600;}
 .btn-g{background:#0C213C;color:#fff;}.btn-g:hover{background:#254E7A;}
 .btn-gcal{background:#CBE3EF;color:#0C213C;border:none;font-size:11px;height:28px;padding:4px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600;}
 .btn-gcal:hover{background:#2A4057;color:#fff;}
-
-/* TABLES */
 .table-wrap{border:1.5px solid #CBE3EF;border-radius:14px;overflow:hidden;margin-bottom:1rem;background:#fff;}
 table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;}
 thead th{background:#0C213C;padding:12px 14px;text-align:left;font-weight:600;color:#CBE3EF;font-size:13px;letter-spacing:0.4px;}
@@ -94,77 +69,51 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 .empty{text-align:center;color:#ACACAC;padding:2rem;font-size:13px;}
 .del-btn{background:none;border:none;color:#ACACAC;cursor:pointer;font-size:12px;padding:3px 6px;border-radius:6px;}
 .del-btn:hover{background:#FDEAEA;color:#8B1C1C;}
-
-/* BADGES */
 .badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:99px;white-space:nowrap;font-weight:600;}
-.bg-green{background:#d4edda;color:#1a5e2a;}
-.bg-blue{background:#CBE3EF;color:#0C213C;}
-.bg-amber{background:#fff3cd;color:#6b4500;}
-.bg-coral{background:#fde8e0;color:#7a2e1a;}
-.bg-purple{background:#e8e0f5;color:#3a1a6e;}
-.bg-red{background:#FDEAEA;color:#8B1C1C;}
-.bg-gray{background:#e8e8e8;color:#4a4a4a;}
-.bg-teal{background:#CBE3EF;color:#2A4057;}
+.bg-green{background:#d4edda;color:#1a5e2a;}.bg-blue{background:#CBE3EF;color:#0C213C;}
+.bg-amber{background:#fff3cd;color:#6b4500;}.bg-coral{background:#fde8e0;color:#7a2e1a;}
+.bg-purple{background:#e8e0f5;color:#3a1a6e;}.bg-red{background:#FDEAEA;color:#8B1C1C;}
+.bg-gray{background:#e8e8e8;color:#4a4a4a;}.bg-teal{background:#CBE3EF;color:#2A4057;}
 .bg-pink{background:#fde0ec;color:#6e1a3a;}
 .pay-badge-efectivo{background:#d4edda;color:#1a5e2a;}
 .pay-badge-transferencia{background:#CBE3EF;color:#0C213C;}
 .pay-badge-tarjeta{background:#e8e0f5;color:#3a1a6e;}
 .pay-badge-otro{background:#e8e8e8;color:#4a4a4a;}
-
-/* FILTERS */
 .filter-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
 .filter-row select{font-size:13px;padding:7px 10px;border-radius:8px;border:1.5px solid #CBE3EF;background:#fff;color:#0C213C;font-weight:500;}
-
-/* PROGRESS */
 .prog-track{height:10px;border-radius:5px;background:#CBE3EF;overflow:hidden;margin-bottom:4px;}
 .prog-fill{height:100%;border-radius:5px;transition:width .4s;}
 .prog-labels{display:flex;justify-content:space-between;font-size:12px;color:#2A4057;margin-bottom:5px;font-weight:600;}
-
-/* PATIENTS */
 .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
 .patient-row{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1.5px solid #CBE3EF;cursor:pointer;}
 .patient-row:last-child{border-bottom:none;}
 .patient-row:hover{background:#f7fafc;}
-
-/* SECTION DIVIDER */
 .section-div{font-size:13px;font-weight:700;color:#2A4057;margin:1.25rem 0 8px;border-bottom:2px solid #CBE3EF;padding-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
-
-/* CITAS */
 .cita-card{padding:12px 16px;border-bottom:1.5px solid #CBE3EF;}
 .cita-card:last-child{border-bottom:none;}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:#0C213C;color:#CBE3EF;font-size:13px;padding:12px 20px;border-radius:12px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(12,33,60,.4);font-weight:500;}
 .toast.show{opacity:1;}
-
-/* PAQUETES */
+.toast-error{background:#8B1C1C!important;color:#fff!important;}
 .paq-bar-bg{height:8px;border-radius:4px;background:#CBE3EF;overflow:hidden;margin-top:5px;}
 .paq-bar-fill{height:100%;border-radius:4px;background:#254E7A;transition:width .4s;}
 .paq-card{background:#fff;border:1.5px solid #CBE3EF;border-radius:14px;padding:14px 16px;margin-bottom:10px;}
 .paq-sesion-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1.5px solid #CBE3EF;font-size:13px;}
 .paq-sesion-row:last-child{border-bottom:none;}
-
-/* LOADING */
-.loading-overlay{position:fixed;inset:0;background:rgba(12,33,60,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px;}
+.loading-overlay{position:fixed;inset:0;background:rgba(12,33,60,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px;}
 .spinner{width:40px;height:40px;border:3px solid rgba(203,227,239,0.3);border-top-color:#CBE3EF;border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:14px;color:#CBE3EF;font-weight:500;}
-
 .paq-aviso{display:none;margin-top:10px;padding:8px 12px;background:#CBE3EF;border-radius:8px;font-size:12px;color:#0C213C;font-weight:500;}
-
-@media(max-width:600px){
-  .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .brand-name{font-size:26px;}
-  table{font-size:12px;}
-  thead th,tbody td{padding:9px 10px;}
-}
+.conn-banner{display:none;background:#FDEAEA;border:1.5px solid #f5c0c0;border-radius:10px;padding:10px 16px;margin-bottom:1rem;font-size:13px;color:#8B1C1C;font-weight:500;align-items:center;gap:8px;}
+.conn-banner.show{display:flex;}
+@media(max-width:600px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr));}.brand-name{font-size:26px;}table{font-size:12px;}thead th,tbody td{padding:9px 10px;}}
 </style>
 </head>
 <body>
 
 <div class="loading-overlay" id="loading">
   <div class="spinner"></div>
-  <div class="loading-text">Cargando FisioCash...</div>
+  <div class="loading-text" id="loading-text">Cargando FisioCash...</div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -193,12 +142,13 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 <!-- APP -->
 <div id="app-screen">
 <div class="app">
-
+  <div class="conn-banner" id="conn-banner">
+    ⚠️ Sin conexión — los cambios no se están guardando. Verifica tu internet.
+  </div>
   <div class="topbar">
     <div class="brand-name">Fisio<span>Cash</span></div>
     <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
   </div>
-
   <div class="tabs">
     <button class="tab active" onclick="switchTab('ingresos',this)">Ingresos</button>
     <button class="tab" onclick="switchTab('gastos',this)">Gastos</button>
@@ -224,7 +174,11 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
       </select>
     </div>
     <div class="g3">
-      <div class="metric"><div class="lbl">Total filtrado</div><div class="val tv" id="i-total">$0</div><div class="sub" id="i-count">0 registros</div></div>
+      <div class="metric" style="border-color:#1a7a3a;background:#f0faf4;">
+        <div class="lbl" style="color:#1a7a3a;">Total filtrado</div>
+        <div class="val" style="color:#1a7a3a;font-size:30px;" id="i-total">$0</div>
+        <div class="sub" id="i-count">0 registros</div>
+      </div>
       <div class="metric"><div class="lbl">Reinversión 60%</div><div class="val av" id="i-reinv">$0</div><div class="sub">Insumos y gastos</div></div>
       <div class="metric"><div class="lbl">Tu salario 40%</div><div class="val pv" id="i-salary">$0</div><div class="sub">Ingreso personal</div></div>
     </div>
@@ -382,16 +336,28 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
     </div>
   </div>
 
-</div><!-- /app -->
-</div><!-- /app-screen -->
+</div>
+</div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy,enableIndexedDbPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",authDomain:"fisiocash.firebaseapp.com",projectId:"fisiocash",storageBucket:"fisiocash.firebasestorage.app",messagingSenderId:"356983308627",appId:"1:356983308627:web:3653c65a5f2a83df23a1a6"});
 const auth=getAuth(app),db=getFirestore(app);
+
+/* ── Persistencia local para Safari ── */
+setPersistence(auth,browserLocalPersistence).catch(e=>console.warn('Persistencia auth:',e));
+enableIndexedDbPersistence(db).catch(e=>{
+  if(e.code==='failed-precondition')console.warn('Firestore offline: múltiples pestañas abiertas');
+  else if(e.code==='unimplemented')console.warn('Firestore offline no soportado en este navegador');
+});
+
+/* ── Monitor de conexión ── */
+window.addEventListener('online',()=>document.getElementById('conn-banner').classList.remove('show'));
+window.addEventListener('offline',()=>document.getElementById('conn-banner').classList.add('show'));
+
 let ingresos=[],gastos=[],pacientes=[],citas=[],paquetes=[],unsubs=[];
 const today=new Date().toISOString().split('T')[0];
 const TARIFAS={'Terapia':350,'Valoración':500,'Descarga muscular':350,'Descarga completa':500,'Plan de entrenamiento':400,'Paquete 5 sesiones':1450,'Paquete 10 sesiones':2800,'Otro':0};
@@ -410,38 +376,80 @@ const dL=d=>{if(!d)return'—';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0
 const mK=d=>d?d.substring(0,7):'';
 const ini=n=>n.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
 const isP=s=>s==='Paquete 5 sesiones'||s==='Paquete 10 sesiones';
-const toast=msg=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);};
+
+let toastTimer=null;
+const toast=(msg,err=false)=>{
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.toggle('toast-error',err);
+  t.classList.add('show');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+};
 const hl=id=>{const e=document.getElementById(id);e.style.borderColor='#8B1C1C';setTimeout(()=>e.style.borderColor='',1500);};
 const setDates=()=>{['i-date','g-date','c-date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});const ct=document.getElementById('c-time');if(ct)ct.value='08:00';};
 
+/* ── AUTH ── */
 window.doLogin=async()=>{
   const email=document.getElementById('login-email').value.trim(),pass=document.getElementById('login-password').value;
   const btn=document.getElementById('login-btn'),err=document.getElementById('login-error');
   err.style.display='none';
   if(!email||!pass){err.textContent='Ingresa tu correo y contraseña.';err.style.display='block';return;}
   btn.disabled=true;btn.textContent='Entrando...';
-  try{await signInWithEmailAndPassword(auth,email,pass);}
-  catch(e){
+  try{
+    await setPersistence(auth,browserLocalPersistence);
+    await signInWithEmailAndPassword(auth,email,pass);
+  }catch(e){
     const m={'auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Cuenta no encontrada.','auth/wrong-password':'Contraseña incorrecta.','auth/invalid-email':'Correo no válido.','auth/too-many-requests':'Demasiados intentos. Espera unos minutos.'};
-    err.textContent=m[e.code]||'Error al iniciar sesión.';err.style.display='block';btn.disabled=false;btn.textContent='Entrar';
+    err.textContent=m[e.code]||'Error: '+e.message;
+    err.style.display='block';btn.disabled=false;btn.textContent='Entrar';
   }
 };
-window.doLogout=async()=>{unsubs.forEach(u=>u());unsubs=[];ingresos=[];gastos=[];pacientes=[];citas=[];paquetes=[];await signOut(auth);};
+window.doLogout=async()=>{
+  unsubs.forEach(u=>u());unsubs=[];
+  ingresos=[];gastos=[];pacientes=[];citas=[];paquetes=[];
+  await signOut(auth);
+};
 
 onAuthStateChanged(auth,user=>{
   const ld=document.getElementById('loading'),ls=document.getElementById('login-screen'),as=document.getElementById('app-screen'),btn=document.getElementById('login-btn');
-  if(user){ls.style.display='none';as.style.display='block';ld.style.display='flex';btn.disabled=false;btn.textContent='Entrar';setDates();setupListeners();}
-  else{as.style.display='none';ls.style.display='flex';ld.style.display='none';}
+  if(user){
+    ls.style.display='none';as.style.display='block';ld.style.display='flex';
+    document.getElementById('loading-text').textContent='Sincronizando datos...';
+    btn.disabled=false;btn.textContent='Entrar';
+    setDates();setupListeners();
+  }else{
+    as.style.display='none';ls.style.display='flex';ld.style.display='none';
+  }
 });
 
+/* ── FIRESTORE LISTENERS ── */
 function setupListeners(){
+  let firstLoad=true;
   unsubs.push(
-    onSnapshot(query(collection(db,'ingresos'),orderBy('createdAt','desc')),s=>{ingresos=s.docs.map(d=>({id:d.id,...d.data()}));updMF('filter-mes',ingresos);renderIngresos();renderGastos();document.getElementById('loading').style.display='none';}),
-    onSnapshot(query(collection(db,'gastos'),orderBy('createdAt','desc')),s=>{gastos=s.docs.map(d=>({id:d.id,...d.data()}));renderGastos();}),
-    onSnapshot(query(collection(db,'pacientes'),orderBy('createdAt','desc')),s=>{pacientes=s.docs.map(d=>({id:d.id,...d.data()}));renderPacientes();refreshPS();}),
-    onSnapshot(query(collection(db,'citas'),orderBy('createdAt','desc')),s=>{citas=s.docs.map(d=>({id:d.id,...d.data()}));updMF('c-filter-mes',citas);renderCitas();renderPacientes();}),
-    onSnapshot(query(collection(db,'paquetes'),orderBy('createdAt','desc')),s=>{paquetes=s.docs.map(d=>({id:d.id,...d.data()}));renderPaquetes();})
+    onSnapshot(query(collection(db,'ingresos'),orderBy('createdAt','desc')),
+      s=>{ingresos=s.docs.map(d=>({id:d.id,...d.data()}));updMF('filter-mes',ingresos);renderIngresos();renderGastos();if(firstLoad){document.getElementById('loading').style.display='none';firstLoad=false;}},
+      e=>{toast('Error al cargar ingresos: '+e.message,true);document.getElementById('loading').style.display='none';}
+    ),
+    onSnapshot(query(collection(db,'gastos'),orderBy('createdAt','desc')),
+      s=>{gastos=s.docs.map(d=>({id:d.id,...d.data()}));renderGastos();},
+      e=>toast('Error al cargar gastos: '+e.message,true)
+    ),
+    onSnapshot(query(collection(db,'pacientes'),orderBy('createdAt','desc')),
+      s=>{pacientes=s.docs.map(d=>({id:d.id,...d.data()}));renderPacientes();refreshPS();},
+      e=>toast('Error al cargar pacientes: '+e.message,true)
+    ),
+    onSnapshot(query(collection(db,'citas'),orderBy('createdAt','desc')),
+      s=>{citas=s.docs.map(d=>({id:d.id,...d.data()}));updMF('c-filter-mes',citas);renderCitas();renderPacientes();},
+      e=>toast('Error al cargar citas: '+e.message,true)
+    ),
+    onSnapshot(query(collection(db,'paquetes'),orderBy('createdAt','desc')),
+      s=>{paquetes=s.docs.map(d=>({id:d.id,...d.data()}));renderPaquetes();},
+      e=>toast('Error al cargar paquetes: '+e.message,true)
+    )
   );
+  /* Ocultar loading después de 8 segundos máximo */
+  setTimeout(()=>document.getElementById('loading').style.display='none',8000);
 }
 
 window.switchTab=(id,el)=>{
@@ -462,45 +470,71 @@ function gcL(c){
   return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Cita: '+c.patient+' — '+c.serv)}&dates=${s}/${e}&details=${encodeURIComponent('Paciente: '+c.patient+'\nServicio: '+c.serv+'\nMonto: '+fmt(c.amount||0)+'\nPago: '+(c.pay||'—')+'\n'+(c.notes||''))}`;
 }
 
+/* ── INGRESOS ── */
 window.addIngreso=async()=>{
   const date=document.getElementById('i-date').value,concept=document.getElementById('i-concept').value.trim(),serv=document.getElementById('i-serv').value,pay=document.getElementById('i-pay').value,amount=parseFloat(document.getElementById('i-amount').value);
   if(!date||!concept||isNaN(amount)||amount<=0){hl('i-amount');return;}
-  await addDoc(collection(db,'ingresos'),{date,concept,serv,pay,amount,createdAt:Date.now()});
-  document.getElementById('i-concept').value='';document.getElementById('i-amount').value='';toast('Ingreso guardado');
+  try{
+    await addDoc(collection(db,'ingresos'),{date,concept,serv,pay,amount,createdAt:Date.now()});
+    document.getElementById('i-concept').value='';document.getElementById('i-amount').value='';
+    toast('✓ Ingreso guardado en la nube');
+  }catch(e){toast('Error al guardar ingreso: '+e.message,true);}
 };
-window.delIngreso=async id=>{await deleteDoc(doc(db,'ingresos',id));toast('Ingreso eliminado');};
+window.delIngreso=async id=>{
+  try{await deleteDoc(doc(db,'ingresos',id));toast('Ingreso eliminado');}
+  catch(e){toast('Error al eliminar: '+e.message,true);}
+};
 function renderIngresos(){
   const mes=document.getElementById('filter-mes').value,serv=document.getElementById('filter-serv').value,pago=document.getElementById('filter-pago').value;
   const f=ingresos.filter(e=>(!mes||mK(e.date)===mes)&&(!serv||e.serv===serv)&&(!pago||e.pay===pago));
   const tot=f.reduce((s,e)=>s+e.amount,0);
-  document.getElementById('i-total').textContent=fmt(tot);document.getElementById('i-reinv').textContent=fmt(tot*.6);document.getElementById('i-salary').textContent=fmt(tot*.4);document.getElementById('i-count').textContent=f.length+' registro'+(f.length!==1?'s':'');
+  document.getElementById('i-total').textContent=fmt(tot);
+  document.getElementById('i-reinv').textContent=fmt(tot*.6);document.getElementById('i-salary').textContent=fmt(tot*.4);
+  document.getElementById('i-count').textContent=f.length+' registro'+(f.length!==1?'s':'');
   const tb=document.getElementById('i-body');
   if(!f.length){tb.innerHTML='<tr><td colspan="8" class="empty">Sin registros para este filtro</td></tr>';return;}
   tb.innerHTML=f.map(e=>`<tr><td>${dL(e.date)}</td><td title="${e.concept}">${e.concept}</td><td><span class="badge ${sC[e.serv]||'bg-gray'}">${e.serv||'—'}</span></td><td><span class="badge ${payC[e.pay]||'pay-badge-otro'}">${e.pay||'—'}</span></td><td style="text-align:right;font-weight:700;color:#0C213C">${fmt(e.amount)}</td><td style="text-align:right;color:#2A4057;font-weight:600">${fmt(e.amount*.6)}</td><td style="text-align:right;color:#254E7A;font-weight:600">${fmt(e.amount*.4)}</td><td><button class="del-btn" onclick="delIngreso('${e.id}')">✕</button></td></tr>`).join('');
 }
 
+/* ── GASTOS ── */
 window.addGasto=async()=>{
   const date=document.getElementById('g-date').value,desc=document.getElementById('g-desc').value.trim(),cat=document.getElementById('g-cat').value,amount=parseFloat(document.getElementById('g-amount').value);
   if(!date||!desc||isNaN(amount)||amount<=0){hl('g-amount');return;}
-  await addDoc(collection(db,'gastos'),{date,desc,cat,amount,createdAt:Date.now()});
-  document.getElementById('g-desc').value='';document.getElementById('g-amount').value='';toast('Gasto guardado');
+  try{
+    await addDoc(collection(db,'gastos'),{date,desc,cat,amount,createdAt:Date.now()});
+    document.getElementById('g-desc').value='';document.getElementById('g-amount').value='';
+    toast('✓ Gasto guardado en la nube');
+  }catch(e){toast('Error al guardar gasto: '+e.message,true);}
 };
-window.delGasto=async id=>{await deleteDoc(doc(db,'gastos',id));toast('Gasto eliminado');};
+window.delGasto=async id=>{
+  try{await deleteDoc(doc(db,'gastos',id));toast('Gasto eliminado');}
+  catch(e){toast('Error al eliminar: '+e.message,true);}
+};
 function renderGastos(){
   const tI=ingresos.reduce((s,e)=>s+e.amount,0),budget=tI*.6,tG=gastos.reduce((s,e)=>s+e.amount,0),pct=budget>0?Math.min(100,Math.round(tG/budget*100)):0;
-  document.getElementById('g-total').textContent=fmt(tG);document.getElementById('g-budget').textContent=fmt(budget);document.getElementById('g-avail').textContent=fmt(budget-tG);document.getElementById('g-count').textContent=gastos.length+' registro'+(gastos.length!==1?'s':'');document.getElementById('g-pct-sub').textContent=pct+'% del presupuesto usado';document.getElementById('g-pct-lbl').textContent=pct+'%';
+  document.getElementById('g-total').textContent=fmt(tG);document.getElementById('g-budget').textContent=fmt(budget);document.getElementById('g-avail').textContent=fmt(budget-tG);
+  document.getElementById('g-count').textContent=gastos.length+' registro'+(gastos.length!==1?'s':'');
+  document.getElementById('g-pct-sub').textContent=pct+'% del presupuesto usado';document.getElementById('g-pct-lbl').textContent=pct+'%';
   const prog=document.getElementById('g-prog');prog.style.width=pct+'%';prog.style.background=pct>90?'#8B1C1C':pct>70?'#b07800':'#254E7A';
   const tb=document.getElementById('g-body');
   if(!gastos.length){tb.innerHTML='<tr><td colspan="5" class="empty">Sin gastos registrados</td></tr>';return;}
   tb.innerHTML=gastos.map(e=>`<tr><td>${dL(e.date)}</td><td title="${e.desc}">${e.desc}</td><td><span class="badge ${catC[e.cat]||'bg-gray'}">${e.cat}</span></td><td style="text-align:right;font-weight:700;color:#8B1C1C">${fmt(e.amount)}</td><td><button class="del-btn" onclick="delGasto('${e.id}')">✕</button></td></tr>`).join('');
 }
 
+/* ── PACIENTES ── */
 window.addPaciente=async()=>{
-  const name=document.getElementById('p-name').value.trim();if(!name){hl('p-name');return;}
-  await addDoc(collection(db,'pacientes'),{name,phone:document.getElementById('p-phone').value.trim(),condition:document.getElementById('p-condition').value.trim(),createdAt:Date.now()});
-  ['p-name','p-phone','p-condition'].forEach(id=>document.getElementById(id).value='');toast('Paciente registrado');
+  const name=document.getElementById('p-name').value.trim();
+  if(!name){hl('p-name');return;}
+  try{
+    await addDoc(collection(db,'pacientes'),{name,phone:document.getElementById('p-phone').value.trim(),condition:document.getElementById('p-condition').value.trim(),createdAt:Date.now()});
+    ['p-name','p-phone','p-condition'].forEach(id=>document.getElementById(id).value='');
+    toast('✓ Paciente guardado en la nube');
+  }catch(e){toast('Error al guardar paciente: '+e.message,true);}
 };
-window.delPaciente=async id=>{await deleteDoc(doc(db,'pacientes',id));toast('Paciente eliminado');};
+window.delPaciente=async id=>{
+  try{await deleteDoc(doc(db,'pacientes',id));toast('Paciente eliminado');}
+  catch(e){toast('Error al eliminar: '+e.message,true);}
+};
 function refreshPS(){
   const sel=document.getElementById('c-patient');if(!sel)return;
   const cur=sel.value;sel.innerHTML='<option value="">— Selecciona paciente —</option>';
@@ -528,6 +562,7 @@ function renderPacientes(){
 }
 window.togglePD=id=>{const e=document.getElementById('pd-'+id);if(e)e.style.display=e.style.display==='none'?'block':'none';};
 
+/* ── CITAS ── */
 window.onCFF=()=>{
   const serv=document.getElementById('c-serv').value,patient=document.getElementById('c-patient').value,tarifa=TARIFAS[serv]||0;
   const hint=document.getElementById('tarifa-hint'),aviso=document.getElementById('paq-aviso');
@@ -553,32 +588,41 @@ async function remSP(citaId){
 window.addCita=async()=>{
   const date=document.getElementById('c-date').value,time=document.getElementById('c-time').value,patient=document.getElementById('c-patient').value,serv=document.getElementById('c-serv').value,pay=document.getElementById('c-pay').value,amount=parseFloat(document.getElementById('c-amount').value)||0,status=document.getElementById('c-status').value,notes=document.getElementById('c-notes').value.trim();
   if(!date||!patient){hl(!date?'c-date':'c-patient');return;}
-  let ingresoId=null;
-  if(isP(serv)){
-    const pq=await fOCP(patient,serv,date);
-    if(status==='Realizada'&&amount>0&&!pq.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});toast('Paquete registrado + ingreso añadido');}
-  }else if(status==='Realizada'&&amount>0){const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;toast('Cita realizada — ingreso: '+fmt(amount));}
-  const cr=await addDoc(collection(db,'citas'),{date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:Date.now()});
-  if(isP(serv)&&status==='Realizada')await addSP(patient,serv,date,cr.id);
-  if(status!=='Realizada')toast('Cita agendada');
-  document.getElementById('c-patient').value='';document.getElementById('c-amount').value='';document.getElementById('c-notes').value='';document.getElementById('c-status').value='Pendiente';document.getElementById('tarifa-hint').style.display='none';document.getElementById('paq-aviso').style.display='none';
+  try{
+    let ingresoId=null;
+    if(isP(serv)){
+      const pq=await fOCP(patient,serv,date);
+      if(status==='Realizada'&&amount>0&&!pq.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});toast('✓ Paquete registrado + ingreso guardado');}
+    }else if(status==='Realizada'&&amount>0){
+      const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;toast('✓ Cita realizada — ingreso: '+fmt(amount));
+    }
+    const cr=await addDoc(collection(db,'citas'),{date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:Date.now()});
+    if(isP(serv)&&status==='Realizada')await addSP(patient,serv,date,cr.id);
+    if(status!=='Realizada')toast('✓ Cita agendada y guardada');
+    document.getElementById('c-patient').value='';document.getElementById('c-amount').value='';document.getElementById('c-notes').value='';document.getElementById('c-status').value='Pendiente';document.getElementById('tarifa-hint').style.display='none';document.getElementById('paq-aviso').style.display='none';
+  }catch(e){toast('Error al guardar cita: '+e.message,true);}
 };
 window.delCita=async id=>{
   const c=citas.find(c=>c.id===id);
-  if(c){if(c.ingresoId)await deleteDoc(doc(db,'ingresos',c.ingresoId));if(isP(c.serv)&&c.status==='Realizada')await remSP(id);}
-  await deleteDoc(doc(db,'citas',id));toast('Cita eliminada');
+  try{
+    if(c){if(c.ingresoId)await deleteDoc(doc(db,'ingresos',c.ingresoId));if(isP(c.serv)&&c.status==='Realizada')await remSP(id);}
+    await deleteDoc(doc(db,'citas',id));toast('Cita eliminada');
+  }catch(e){toast('Error al eliminar: '+e.message,true);}
 };
 window.updateCitaStatus=async(id,val)=>{
   const c=citas.find(c=>c.id===id);if(!c)return;
-  const prev=c.status;await updateDoc(doc(db,'citas',id),{status:val});
-  if(val==='Realizada'&&prev!=='Realizada'){
-    if(isP(c.serv)){await addSP(c.patient,c.serv,c.date,c.id);const pq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);if(pq&&!pq.ingresoId&&c.amount>0){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso de paquete registrado');}else{const u=pq?pq.sesionesUsadas+1:1,t=pq?pq.sesionesTotal:'?';toast(`Sesión ${u}/${t} registrada`);}}
-    else if(c.amount>0&&!c.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('Ingreso registrado — '+fmt(c.amount));}
-  }
-  if((val==='Cancelada'||val==='Pendiente')&&prev==='Realizada'){
-    if(isP(c.serv))await remSP(id);
-    if(c.ingresoId){await deleteDoc(doc(db,'ingresos',c.ingresoId));await updateDoc(doc(db,'citas',id),{ingresoId:null});const pq=paquetes.find(p=>p.ingresoId===c.ingresoId);if(pq)await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:null});toast('Ingreso revertido');}
-  }
+  const prev=c.status;
+  try{
+    await updateDoc(doc(db,'citas',id),{status:val});
+    if(val==='Realizada'&&prev!=='Realizada'){
+      if(isP(c.serv)){await addSP(c.patient,c.serv,c.date,c.id);const pq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);if(pq&&!pq.ingresoId&&c.amount>0){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('✓ Ingreso de paquete guardado');}else{const u=pq?pq.sesionesUsadas+1:1,t=pq?pq.sesionesTotal:'?';toast(`✓ Sesión ${u}/${t} registrada`);}}
+      else if(c.amount>0&&!c.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('✓ Ingreso guardado — '+fmt(c.amount));}
+    }
+    if((val==='Cancelada'||val==='Pendiente')&&prev==='Realizada'){
+      if(isP(c.serv))await remSP(id);
+      if(c.ingresoId){await deleteDoc(doc(db,'ingresos',c.ingresoId));await updateDoc(doc(db,'citas',id),{ingresoId:null});const pq=paquetes.find(p=>p.ingresoId===c.ingresoId);if(pq)await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:null});toast('Ingreso revertido');}
+    }
+  }catch(e){toast('Error al actualizar cita: '+e.message,true);}
 };
 function renderCitas(){
   const fS=document.getElementById('c-filter-status').value,fM=document.getElementById('c-filter-mes').value;
@@ -603,6 +647,7 @@ function renderCitas(){
   }).join('')+'</div></div>';
 }
 
+/* ── PAQUETES ── */
 function renderPaquetes(){
   const act=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).length,comp=paquetes.filter(p=>p.sesionesUsadas>=p.sesionesTotal).length,pend=paquetes.filter(p=>p.sesionesUsadas<p.sesionesTotal).reduce((s,p)=>s+(p.sesionesTotal-p.sesionesUsadas),0);
   document.getElementById('pq-activos').textContent=act;document.getElementById('pq-completos').textContent=comp;document.getElementById('pq-pendientes').textContent=pend;
@@ -616,6 +661,7 @@ function renderPaquetes(){
   }).join('');
 }
 
+/* ── RESUMEN ── */
 window.renderResumen=()=>{
   const tI=ingresos.reduce((s,e)=>s+e.amount,0),tG=gastos.reduce((s,e)=>s+e.amount,0),sal=tI*.4;
   document.getElementById('r-ing').textContent=fmt(tI);document.getElementById('r-gas').textContent=fmt(tG);document.getElementById('r-sal').textContent=fmt(sal);
