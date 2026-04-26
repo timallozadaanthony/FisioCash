@@ -247,6 +247,7 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
       <div class="form-row">
         <div class="field" style="flex:2;"><label>Nombre completo</label><input type="text" id="p-name" placeholder="Nombre del paciente"></div>
         <div class="field"><label>Teléfono</label><input type="text" id="p-phone" placeholder="Ej. 222 123 4567"></div>
+        <div class="field" style="max-width:150px;"><label>Fecha de nacimiento</label><input type="date" id="p-dob"></div>
         <div class="field" style="flex:2;"><label>Padecimiento / Motivo</label><input type="text" id="p-condition" placeholder="Ej. Lumbalgia crónica"></div>
         <button class="btn btn-g" onclick="addPaciente()">+ Registrar</button>
       </div>
@@ -337,6 +338,27 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
   </div>
 
 </div>
+</div>
+
+<!-- MODAL EDITAR PACIENTE -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(12,33,60,0.6);z-index:888;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#fff;border-radius:16px;padding:1.75rem 1.5rem;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(12,33,60,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+      <span style="font-size:16px;font-weight:700;color:#0C213C;">Editar paciente</span>
+      <button onclick="closeEditModal()" style="background:none;border:none;font-size:22px;color:#ACACAC;cursor:pointer;line-height:1;">&#x2715;</button>
+    </div>
+    <input type="hidden" id="edit-pid">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="field"><label>Nombre completo</label><input type="text" id="edit-name" placeholder="Nombre del paciente"></div>
+      <div class="field"><label>Tel&eacute;fono</label><input type="text" id="edit-phone" placeholder="Ej. 222 123 4567"></div>
+      <div class="field"><label>Fecha de nacimiento</label><input type="date" id="edit-dob"></div>
+      <div class="field"><label>Padecimiento / Motivo</label><input type="text" id="edit-condition" placeholder="Ej. Lumbalgia cr&oacute;nica"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:1.25rem;">
+      <button onclick="closeEditModal()" style="flex:1;background:#f0f4f8;color:#2A4057;border:1.5px solid #CBE3EF;border-radius:10px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>
+      <button onclick="saveEditPaciente()" style="flex:2;background:#0C213C;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;">Guardar cambios</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -530,15 +552,44 @@ function renderGastos(){
 window.addPaciente=async()=>{
   const name=document.getElementById('p-name').value.trim();
   if(!name){hl('p-name');return;}
+  const phone=document.getElementById('p-phone').value.trim();
+  const condition=document.getElementById('p-condition').value.trim();
+  const dob=document.getElementById('p-dob').value;
   try{
-    await addDoc(collection(db,'pacientes'),{name,phone:document.getElementById('p-phone').value.trim(),condition:document.getElementById('p-condition').value.trim(),createdAt:Date.now()});
-    ['p-name','p-phone','p-condition'].forEach(id=>document.getElementById(id).value='');
+    await addDoc(collection(db,'pacientes'),{name,phone,condition,dob,createdAt:Date.now()});
+    ['p-name','p-phone','p-condition','p-dob'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('p-name').focus();
     toast('✓ Paciente guardado en la nube');
   }catch(e){toast('Error al guardar paciente: '+e.message,true);}
 };
 window.delPaciente=async id=>{
   try{await deleteDoc(doc(db,'pacientes',id));toast('Paciente eliminado');}
   catch(e){toast('Error al eliminar: '+e.message,true);}
+};
+window.editPaciente=id=>{
+  const p=pacientes.find(p=>p.id===id);if(!p)return;
+  document.getElementById('edit-pid').value=id;
+  document.getElementById('edit-name').value=p.name||'';
+  document.getElementById('edit-phone').value=p.phone||'';
+  document.getElementById('edit-condition').value=p.condition||'';
+  document.getElementById('edit-dob').value=p.dob||'';
+  document.getElementById('edit-modal').style.display='flex';
+};
+window.closeEditModal=()=>{document.getElementById('edit-modal').style.display='none';};
+window.saveEditPaciente=async()=>{
+  const id=document.getElementById('edit-pid').value;
+  const name=document.getElementById('edit-name').value.trim();
+  if(!name){hl('edit-name');return;}
+  try{
+    await updateDoc(doc(db,'pacientes',id),{
+      name,
+      phone:document.getElementById('edit-phone').value.trim(),
+      condition:document.getElementById('edit-condition').value.trim(),
+      dob:document.getElementById('edit-dob').value
+    });
+    document.getElementById('edit-modal').style.display='none';
+    toast('✓ Paciente actualizado');
+  }catch(e){toast('Error al actualizar: '+e.message,true);}
 };
 function refreshPS(){
   const sel=document.getElementById('c-patient');if(!sel)return;
@@ -553,10 +604,12 @@ function renderPacientes(){
   if(!pacientes.length){wrap.innerHTML='<div class="empty">Sin pacientes registrados</div>';return;}
   wrap.innerHTML='<div>'+pacientes.map((p,i)=>{
     const ci=i%5,pc=citas.filter(c=>c.patient===p.name),last=pc[0],pqP=paquetes.filter(pq=>pq.patient===p.name&&pq.sesionesUsadas<pq.sesionesTotal);
+    const dobStr=p.dob?`<div style="font-size:11px;color:#ACACAC">Nac. ${dL(p.dob)}</div>`:'';
     return`<div class="patient-row" onclick="togglePD('${p.id}')">
       <div class="avatar" style="background:${avBg[ci]};color:${avFg[ci]}">${ini(p.name)}</div>
       <div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:#0C213C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div style="font-size:12px;color:#ACACAC;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.condition||'Sin padecimiento registrado'}</div></div>
-      <div style="text-align:right;min-width:90px;flex-shrink:0;">${p.phone?`<div style="font-size:12px;color:#2A4057">${p.phone}</div>`:''}<div style="font-size:11px;color:#ACACAC">${pc.length} cita${pc.length!==1?'s':''}</div>${pqP.length?`<div style="font-size:11px;color:#2A4057;font-weight:600">${pqP.length} paq. activo${pqP.length!==1?'s':''}</div>`:''}</div>
+      <div style="text-align:right;min-width:90px;flex-shrink:0;">${p.phone?`<div style="font-size:12px;color:#2A4057">${p.phone}</div>`:''} ${dobStr}<div style="font-size:11px;color:#ACACAC">${pc.length} cita${pc.length!==1?'s':''}</div>${pqP.length?`<div style="font-size:11px;color:#2A4057;font-weight:600">${pqP.length} paq. activo${pqP.length!==1?'s':''}</div>`:''}</div>
+      <button class="btn" style="background:#CBE3EF;color:#0C213C;height:28px;padding:4px 10px;font-size:11px;margin-left:4px;" onclick="event.stopPropagation();editPaciente('${p.id}')">Editar</button>
       <button class="del-btn" onclick="event.stopPropagation();delPaciente('${p.id}')">✕</button>
     </div>
     <div id="pd-${p.id}" style="display:none;background:#f7fafc;padding:10px 16px;font-size:13px;border-bottom:1.5px solid #CBE3EF;color:#2A4057;">
