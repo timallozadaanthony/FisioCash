@@ -364,17 +364,14 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy,enableIndexedDbPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",authDomain:"fisiocash.firebaseapp.com",projectId:"fisiocash",storageBucket:"fisiocash.firebasestorage.app",messagingSenderId:"356983308627",appId:"1:356983308627:web:3653c65a5f2a83df23a1a6"});
 const auth=getAuth(app),db=getFirestore(app);
 
 /* ── Persistencia local para Safari ── */
 setPersistence(auth,browserLocalPersistence).catch(e=>console.warn('Persistencia auth:',e));
-enableIndexedDbPersistence(db).catch(e=>{
-  if(e.code==='failed-precondition')console.warn('Firestore offline: múltiples pestañas abiertas');
-  else if(e.code==='unimplemented')console.warn('Firestore offline no soportado en este navegador');
-});
+/* Persistencia offline desactivada para garantizar sincronización en tiempo real entre dispositivos */
 
 /* ── Monitor de conexión ── */
 window.addEventListener('online',()=>document.getElementById('conn-banner').classList.remove('show'));
@@ -557,8 +554,13 @@ window.addPaciente=async()=>{
   const dob=document.getElementById('p-dob').value;
   try{
     await addDoc(collection(db,'pacientes'),{name,phone,condition,dob,createdAt:Date.now()});
-    ['p-name','p-phone','p-condition','p-dob'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('p-name').focus();
+    /* Limpiar campos de forma robusta para Safari móvil y escritorio */
+    const camposPaciente=['p-name','p-phone','p-condition','p-dob'];
+    camposPaciente.forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.value='';el.defaultValue='';}
+    });
+    setTimeout(()=>{const n=document.getElementById('p-name');if(n)n.focus();},100);
     toast('✓ Paciente guardado en la nube');
   }catch(e){toast('Error al guardar paciente: '+e.message,true);}
 };
