@@ -400,13 +400,33 @@ const isP=s=>s==='Paquete 5 sesiones'||s==='Paquete 10 sesiones';
 
 let toastTimer=null;
 const toast=(msg,err=false)=>{
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.classList.toggle('toast-error',err);
-  t.classList.add('show');
-  if(toastTimer)clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+  try{
+    const t=document.getElementById('toast');
+    if(t){
+      t.textContent=msg;
+      t.classList.toggle('toast-error',err);
+      t.classList.add('show');
+      if(toastTimer)clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+    }
+  }catch(e){console.log(msg);}
 };
+function mostrarExito(msg){
+  toast('✓ '+msg,false);
+  try{
+    const b=document.getElementById('conn-banner');
+    if(b){b.style.background='#d4edda';b.style.color='#1a5e2a';b.style.borderColor='#a8d5b5';b.textContent='✓ '+msg;b.classList.add('show');setTimeout(()=>{b.classList.remove('show');b.style.background='';b.style.color='';b.style.borderColor='';},4000);}
+  }catch(e){}
+}
+function mostrarError(msg){
+  toast(msg,true);
+  try{
+    const b=document.getElementById('conn-banner');
+    if(b){b.style.background='#FDEAEA';b.style.color='#8B1C1C';b.style.borderColor='#f5c0c0';b.textContent='⚠️ '+msg;b.classList.add('show');setTimeout(()=>b.classList.remove('show'),7000);}
+  }catch(e){}
+  console.error('[FisioCash]',msg);
+}
+
 const hl=id=>{const e=document.getElementById(id);e.style.borderColor='#8B1C1C';setTimeout(()=>e.style.borderColor='',1500);};
 const setDates=()=>{['i-date','g-date','c-date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});const ct=document.getElementById('c-time');if(ct)ct.value='08:00';};
 
@@ -435,12 +455,19 @@ window.doLogout=async()=>{
 onAuthStateChanged(auth,user=>{
   const ld=document.getElementById('loading'),ls=document.getElementById('login-screen'),as=document.getElementById('app-screen'),btn=document.getElementById('login-btn');
   if(user){
-    ls.style.display='none';as.style.display='block';ld.style.display='flex';
-    document.getElementById('loading-text').textContent='Sincronizando datos...';
+    console.log('Usuario autenticado:',user.uid,'email:',user.email);
+    ls.style.display='none';
+    as.style.display='block';
+    ld.style.display='flex';
+    try{document.getElementById('loading-text').textContent='Sincronizando datos...';}catch(e){}
     btn.disabled=false;btn.textContent='Entrar';
-    setDates();setupListeners();
+    setDates();
+    setTimeout(()=>setupListeners(),400);
   }else{
-    as.style.display='none';ls.style.display='flex';ld.style.display='none';
+    console.log('No hay usuario autenticado');
+    as.style.display='none';
+    ls.style.display='flex';
+    ld.style.display='none';
   }
 });
 
@@ -524,8 +551,8 @@ window.addIngreso=async()=>{
   try{
     await addDoc(collection(db,'ingresos'),{date,concept,serv,pay,amount,createdAt:Date.now()});
     document.getElementById('i-concept').value='';document.getElementById('i-amount').value='';
-    toast('✓ Ingreso guardado en la nube');
-  }catch(e){toast('Error al guardar ingreso: '+e.message,true);}
+    mostrarExito('Ingreso guardado en la nube');
+  }catch(e){mostrarError('Error al guardar ingreso: '+e.message);}
 };
 window.delIngreso=async id=>{
   try{await deleteDoc(doc(db,'ingresos',id));toast('Ingreso eliminado');}
@@ -550,8 +577,8 @@ window.addGasto=async()=>{
   try{
     await addDoc(collection(db,'gastos'),{date,desc,cat,amount,createdAt:Date.now()});
     document.getElementById('g-desc').value='';document.getElementById('g-amount').value='';
-    toast('✓ Gasto guardado en la nube');
-  }catch(e){toast('Error al guardar gasto: '+e.message,true);}
+    mostrarExito('Gasto guardado en la nube');
+  }catch(e){mostrarError('Error al guardar gasto: '+e.message);}
 };
 window.delGasto=async id=>{
   try{await deleteDoc(doc(db,'gastos',id));toast('Gasto eliminado');}
@@ -570,28 +597,37 @@ function renderGastos(){
 
 /* ── PACIENTES ── */
 window.addPaciente=async()=>{
+  /* Verificar sesión activa */
+  const user=auth.currentUser;
+  if(!user){
+    mostrarError('Tu sesión expiró. Cierra sesión e inicia de nuevo.');
+    return;
+  }
   const name=document.getElementById('p-name').value.trim();
   if(!name){hl('p-name');return;}
   const phone=document.getElementById('p-phone').value.trim();
   const condition=document.getElementById('p-condition').value.trim();
   const dob=document.getElementById('p-dob').value;
+  const btn=document.querySelector('[onclick="addPaciente()"]');
+  if(btn){btn.disabled=true;btn.textContent='Guardando...';}
   try{
-    await addDoc(collection(db,'pacientes'),{name,phone,condition,dob,createdAt:Date.now()});
-    /* Limpiar campos — compatible con Safari iOS y macOS */
-    requestAnimationFrame(()=>{
-      ['p-name','p-phone','p-condition','p-dob'].forEach(id=>{
-        const el=document.getElementById(id);
-        if(!el)return;
-        el.value='';
-        el.defaultValue='';
-        el.setAttribute('value','');
-      });
-      const pn=document.getElementById('p-name');
-      if(pn){pn.blur();setTimeout(()=>pn.focus(),50);}
+    const ref=await addDoc(collection(db,'pacientes'),{name,phone,condition,dob,uid:user.uid,createdAt:Date.now()});
+    console.log('[FisioCash] Paciente guardado ID:',ref.id);
+    /* Limpiar campos */
+    ['p-name','p-phone','p-condition','p-dob'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.value='';
     });
-    toast('✓ Paciente guardado en la nube');
-  }catch(e){toast('Error al guardar paciente: '+e.message,true);}
+    setTimeout(()=>{const pn=document.getElementById('p-name');if(pn)pn.focus();},80);
+    mostrarExito('Paciente guardado correctamente');
+  }catch(e){
+    console.error('[FisioCash] Error al guardar paciente:',e.code,e.message);
+    mostrarError('Error al guardar: '+e.message);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='+ Registrar';}
+  }
 };
+
 window.delPaciente=async id=>{
   try{await deleteDoc(doc(db,'pacientes',id));toast('Paciente eliminado');}
   catch(e){toast('Error al eliminar: '+e.message,true);}
