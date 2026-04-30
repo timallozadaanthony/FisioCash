@@ -369,9 +369,11 @@ import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,o
 const app=initializeApp({apiKey:"AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",authDomain:"fisiocash.firebaseapp.com",projectId:"fisiocash",storageBucket:"fisiocash.firebasestorage.app",messagingSenderId:"356983308627",appId:"1:356983308627:web:3653c65a5f2a83df23a1a6"});
 const auth=getAuth(app),db=getFirestore(app);
 
-/* ── Persistencia local para Safari ── */
-setPersistence(auth,browserLocalPersistence).catch(e=>console.warn('Persistencia auth:',e));
-/* Persistencia offline desactivada para garantizar sincronización en tiempo real entre dispositivos */
+/* ── Establecer persistencia LOCAL una sola vez antes de cualquier operación auth ── */
+let appReady=false;
+setPersistence(auth,browserLocalPersistence)
+  .then(()=>{appReady=true;console.log('Auth persistencia OK');})
+  .catch(e=>console.warn('Persistencia:',e));
 
 /* ── Monitor de conexión ── */
 window.addEventListener('online',()=>document.getElementById('conn-banner').classList.remove('show'));
@@ -416,7 +418,7 @@ window.doLogin=async()=>{
   if(!email||!pass){err.textContent='Ingresa tu correo y contraseña.';err.style.display='block';return;}
   btn.disabled=true;btn.textContent='Entrando...';
   try{
-    await setPersistence(auth,browserLocalPersistence);
+    /* La persistencia ya fue establecida al iniciar la app */
     await signInWithEmailAndPassword(auth,email,pass);
   }catch(e){
     const m={'auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Cuenta no encontrada.','auth/wrong-password':'Contraseña incorrecta.','auth/invalid-email':'Correo no válido.','auth/too-many-requests':'Demasiados intentos. Espera unos minutos.'};
@@ -443,37 +445,58 @@ onAuthStateChanged(auth,user=>{
 });
 
 /* ── FIRESTORE LISTENERS ── */
+function ocultarLoading(){document.getElementById('loading').style.display='none';}
+
 function setupListeners(){
-  let firstLoad=true;
+  /* Cancelar listeners previos si existen */
+  unsubs.forEach(u=>{try{u();}catch(e){}});
+  unsubs=[];
+
+  const hideLoad=()=>ocultarLoading();
+  const onErr=(col,e)=>{
+    console.error('Error listener '+col+':',e.code, e.message);
+    hideLoad();
+    if(e.code==='permission-denied'){
+      toast('Sin permiso para leer datos. Verifica las reglas de Firebase.',true);
+    } else {
+      toast('Error de conexión ('+col+'). Reconectando...',true);
+      /* Reintentar conexión tras 3 segundos */
+      setTimeout(()=>{if(auth.currentUser)setupListeners();},3000);
+    }
+  };
+
+  let loaded=0;
+  const checkAllLoaded=()=>{loaded++;if(loaded>=1)hideLoad();};
+
   unsubs.push(
-    onSnapshot(query(collection(db,'ingresos'),orderBy('createdAt','desc')),
-      s=>{ingresos=s.docs.map(d=>({id:d.id,...d.data()}));updMF('filter-mes',ingresos);renderIngresos();renderGastos();if(firstLoad){document.getElementById('loading').style.display='none';firstLoad=false;}},
-      e=>{toast('Error al cargar ingresos: '+e.message,true);document.getElementById('loading').style.display='none';}
+    onSnapshot(
+      query(collection(db,'ingresos'),orderBy('createdAt','desc')),
+      s=>{ingresos=s.docs.map(d=>({id:d.id,...d.data()}));updMF('filter-mes',ingresos);renderIngresos();renderGastos();checkAllLoaded();},
+      e=>onErr('ingresos',e)
     ),
-    onSnapshot(query(collection(db,'gastos'),orderBy('createdAt','desc')),
+    onSnapshot(
+      query(collection(db,'gastos'),orderBy('createdAt','desc')),
       s=>{gastos=s.docs.map(d=>({id:d.id,...d.data()}));renderGastos();},
-      e=>toast('Error al cargar gastos: '+e.message,true)
+      e=>onErr('gastos',e)
     ),
-    onSnapshot(query(collection(db,'pacientes'),orderBy('createdAt','desc')),
+    onSnapshot(
+      query(collection(db,'pacientes'),orderBy('createdAt','desc')),
       s=>{pacientes=s.docs.map(d=>({id:d.id,...d.data()}));renderPacientes();refreshPS();},
-      e=>toast('Error al cargar pacientes: '+e.message,true)
+      e=>onErr('pacientes',e)
     ),
-    onSnapshot(query(collection(db,'citas'),orderBy('createdAt','desc')),
-      s=>{
-        citas=s.docs.map(d=>({id:d.id,...d.data()}));
-        updMF('c-filter-mes',citas);
-        renderCitas();
-        renderPacientes();
-      },
-      e=>toast('Error al cargar citas: '+e.message,true)
+    onSnapshot(
+      query(collection(db,'citas'),orderBy('createdAt','desc')),
+      s=>{citas=s.docs.map(d=>({id:d.id,...d.data()}));updMF('c-filter-mes',citas);renderCitas();renderPacientes();},
+      e=>onErr('citas',e)
     ),
-    onSnapshot(query(collection(db,'paquetes'),orderBy('createdAt','desc')),
+    onSnapshot(
+      query(collection(db,'paquetes'),orderBy('createdAt','desc')),
       s=>{paquetes=s.docs.map(d=>({id:d.id,...d.data()}));renderPaquetes();},
-      e=>toast('Error al cargar paquetes: '+e.message,true)
+      e=>onErr('paquetes',e)
     )
   );
-  /* Ocultar loading después de 8 segundos máximo */
-  setTimeout(()=>document.getElementById('loading').style.display='none',8000);
+  /* Ocultar loading tras 6 segundos como máximo */
+  setTimeout(hideLoad,6000);
 }
 
 window.switchTab=(id,el)=>{
@@ -554,13 +577,18 @@ window.addPaciente=async()=>{
   const dob=document.getElementById('p-dob').value;
   try{
     await addDoc(collection(db,'pacientes'),{name,phone,condition,dob,createdAt:Date.now()});
-    /* Limpiar campos de forma robusta para Safari móvil y escritorio */
-    const camposPaciente=['p-name','p-phone','p-condition','p-dob'];
-    camposPaciente.forEach(id=>{
-      const el=document.getElementById(id);
-      if(el){el.value='';el.defaultValue='';}
+    /* Limpiar campos — compatible con Safari iOS y macOS */
+    requestAnimationFrame(()=>{
+      ['p-name','p-phone','p-condition','p-dob'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(!el)return;
+        el.value='';
+        el.defaultValue='';
+        el.setAttribute('value','');
+      });
+      const pn=document.getElementById('p-name');
+      if(pn){pn.blur();setTimeout(()=>pn.focus(),50);}
     });
-    setTimeout(()=>{const n=document.getElementById('p-name');if(n)n.focus();},100);
     toast('✓ Paciente guardado en la nube');
   }catch(e){toast('Error al guardar paciente: '+e.message,true);}
 };
