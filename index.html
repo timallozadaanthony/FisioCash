@@ -363,17 +363,14 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,setPersistence,browserLocalPersistence}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",authDomain:"fisiocash.firebaseapp.com",projectId:"fisiocash",storageBucket:"fisiocash.firebasestorage.app",messagingSenderId:"356983308627",appId:"1:356983308627:web:3653c65a5f2a83df23a1a6"});
 const auth=getAuth(app),db=getFirestore(app);
 
-/* ── Establecer persistencia LOCAL una sola vez antes de cualquier operación auth ── */
-let appReady=false;
-setPersistence(auth,browserLocalPersistence)
-  .then(()=>{appReady=true;console.log('Auth persistencia OK');})
-  .catch(e=>console.warn('Persistencia:',e));
+/* Firebase usa  por defecto — no se necesita configuración adicional */
+console.log('[FisioCash] Firebase inicializado correctamente');
 
 /* ── Monitor de conexión ── */
 window.addEventListener('online',()=>document.getElementById('conn-banner').classList.remove('show'));
@@ -427,6 +424,16 @@ function mostrarError(msg){
   console.error('[FisioCash]',msg);
 }
 
+function dbWrite(promesa, timeoutMs=8000){
+  /* Wrapper con timeout para evitar escrituras colgadas en Safari */
+  return Promise.race([
+    promesa,
+    new Promise((_,reject)=>
+      setTimeout(()=>reject(new Error('Sin respuesta de Firebase (timeout). Verifica tu conexión.')), timeoutMs)
+    )
+  ]);
+}
+
 const hl=id=>{const e=document.getElementById(id);e.style.borderColor='#8B1C1C';setTimeout(()=>e.style.borderColor='',1500);};
 const setDates=()=>{['i-date','g-date','c-date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});const ct=document.getElementById('c-time');if(ct)ct.value='08:00';};
 
@@ -438,7 +445,6 @@ window.doLogin=async()=>{
   if(!email||!pass){err.textContent='Ingresa tu correo y contraseña.';err.style.display='block';return;}
   btn.disabled=true;btn.textContent='Entrando...';
   try{
-    /* La persistencia ya fue establecida al iniciar la app */
     await signInWithEmailAndPassword(auth,email,pass);
   }catch(e){
     const m={'auth/invalid-credential':'Correo o contraseña incorrectos.','auth/user-not-found':'Cuenta no encontrada.','auth/wrong-password':'Contraseña incorrecta.','auth/invalid-email':'Correo no válido.','auth/too-many-requests':'Demasiados intentos. Espera unos minutos.'};
@@ -549,7 +555,7 @@ window.addIngreso=async()=>{
   const date=document.getElementById('i-date').value,concept=document.getElementById('i-concept').value.trim(),serv=document.getElementById('i-serv').value,pay=document.getElementById('i-pay').value,amount=parseFloat(document.getElementById('i-amount').value);
   if(!date||!concept||isNaN(amount)||amount<=0){hl('i-amount');return;}
   try{
-    await addDoc(collection(db,'ingresos'),{date,concept,serv,pay,amount,createdAt:Date.now()});
+    await dbWrite(addDoc(collection(db,'ingresos'),{date,concept,serv,pay,amount,createdAt:Date.now()}));
     document.getElementById('i-concept').value='';document.getElementById('i-amount').value='';
     mostrarExito('Ingreso guardado en la nube');
   }catch(e){mostrarError('Error al guardar ingreso: '+e.message);}
@@ -575,7 +581,7 @@ window.addGasto=async()=>{
   const date=document.getElementById('g-date').value,desc=document.getElementById('g-desc').value.trim(),cat=document.getElementById('g-cat').value,amount=parseFloat(document.getElementById('g-amount').value);
   if(!date||!desc||isNaN(amount)||amount<=0){hl('g-amount');return;}
   try{
-    await addDoc(collection(db,'gastos'),{date,desc,cat,amount,createdAt:Date.now()});
+    await dbWrite(addDoc(collection(db,'gastos'),{date,desc,cat,amount,createdAt:Date.now()}));
     document.getElementById('g-desc').value='';document.getElementById('g-amount').value='';
     mostrarExito('Gasto guardado en la nube');
   }catch(e){mostrarError('Error al guardar gasto: '+e.message);}
@@ -611,7 +617,7 @@ window.addPaciente=async()=>{
   const btn=document.querySelector('[onclick="addPaciente()"]');
   if(btn){btn.disabled=true;btn.textContent='Guardando...';}
   try{
-    const ref=await addDoc(collection(db,'pacientes'),{name,phone,condition,dob,uid:user.uid,createdAt:Date.now()});
+    const ref=await dbWrite(addDoc(collection(db,'pacientes'),{name,phone,condition,dob,uid:user.uid,createdAt:Date.now()}));
     console.log('[FisioCash] Paciente guardado ID:',ref.id);
     /* Limpiar campos */
     ['p-name','p-phone','p-condition','p-dob'].forEach(id=>{
@@ -622,7 +628,12 @@ window.addPaciente=async()=>{
     mostrarExito('Paciente guardado correctamente');
   }catch(e){
     console.error('[FisioCash] Error al guardar paciente:',e.code,e.message);
-    mostrarError('Error al guardar: '+e.message);
+    const msg=e.message.includes('timeout')
+      ? 'Sin respuesta de Firebase. Verifica tu conexión a internet.'
+      : e.code==='permission-denied'
+        ? 'Sin permiso. Ve a Firebase → Firestore Rules y publica las reglas.'
+        : 'Error: '+e.message;
+    mostrarError(msg);
   }finally{
     if(btn){btn.disabled=false;btn.textContent='+ Registrar';}
   }
