@@ -408,6 +408,14 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
+// ── CRÍTICO: Forzar Long Polling para compatibilidad con Safari ──
+// Safari bloquea WebSockets de Firebase por ITP (Intelligent Tracking Prevention)
+// Long Polling funciona en todos los navegadores sin restricciones
+db.settings({
+  experimentalForceLongPolling: true,
+  merge: true
+});
+
 // ── Estado local ──
 let ingresos=[], gastos=[], pacientes=[], citas=[], paquetes=[];
 let unsubs = [];
@@ -617,7 +625,7 @@ function addIngreso(){
   const amount=parseFloat(document.getElementById('i-amount').value);
   if(!date||!concept||isNaN(amount)||amount<=0){hl('i-amount');return;}
   setBtnLoading('btn-add-ingreso',true,'+ Agregar');
-  db.collection('ingresos').add({date,concept,serv,pay,amount,createdAt:firebase.firestore.FieldValue.serverTimestamp()})
+  db.collection('ingresos').add({date,concept,serv,pay,amount,createdAt:Date.now()})
     .then(()=>{
       limpiarCampos(['i-concept','i-amount']);
       toast('✓ Ingreso guardado');
@@ -666,7 +674,7 @@ function addGasto(){
   const amount=parseFloat(document.getElementById('g-amount').value);
   if(!date||!desc||isNaN(amount)||amount<=0){hl('g-amount');return;}
   setBtnLoading('btn-add-gasto',true,'+ Agregar');
-  db.collection('gastos').add({date,desc,cat,amount,createdAt:firebase.firestore.FieldValue.serverTimestamp()})
+  db.collection('gastos').add({date,desc,cat,amount,createdAt:Date.now()})
     .then(()=>{
       limpiarCampos(['g-desc','g-amount']);
       toast('✓ Gasto guardado');
@@ -718,7 +726,7 @@ function addPaciente(){
   setBtnLoading('btn-add-paciente',true,'+ Registrar');
   db.collection('pacientes').add({
     name, phone, dob, condition,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    createdAt: Date.now()
   })
   .then(()=>{
     limpiarCampos(['p-name','p-phone','p-dob','p-condition']);
@@ -864,7 +872,7 @@ function addCita(){
   setBtnLoading('btn-add-cita',true,'+ Agendar');
 
   let ingresoId=null;
-  const ts=firebase.firestore.FieldValue.serverTimestamp();
+  const ts=Date.now();
 
   const guardarCita=()=>{
     return db.collection('citas').add({date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:ts});
@@ -921,7 +929,7 @@ function updateCitaStatus(id,val){
   const c=citas.find(c=>c.id===id);
   if(!c)return;
   const prev=c.status;
-  const ts=firebase.firestore.FieldValue.serverTimestamp();
+  const ts=Date.now();
   db.collection('citas').doc(id).update({status:val}).then(()=>{
     if(val==='Realizada'&&prev!=='Realizada'&&c.amount>0&&!c.ingresoId){
       return db.collection('ingresos').add({date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:ts}).then(ir=>{
