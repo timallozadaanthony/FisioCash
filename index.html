@@ -364,15 +364,11 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import{getFirestore,initializeFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getFirestore,collection,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",authDomain:"fisiocash.firebaseapp.com",projectId:"fisiocash",storageBucket:"fisiocash.firebasestorage.app",messagingSenderId:"356983308627",appId:"1:356983308627:web:3653c65a5f2a83df23a1a6"});
 const auth=getAuth(app);
-/* Long Polling: soluciona el bloqueo de WebSockets en Safari iOS y macOS */
-const db=initializeFirestore(app,{
-  experimentalForceLongPolling:true,
-  useFetchStreams:false
-});
+const db=getFirestore(app);
 
 /* Firebase usa  por defecto — no se necesita configuración adicional */
 console.log('[FisioCash] Firebase inicializado correctamente');
@@ -380,6 +376,63 @@ console.log('[FisioCash] Firebase inicializado correctamente');
 /* ── Monitor de conexión ── */
 window.addEventListener('online',()=>document.getElementById('conn-banner').classList.remove('show'));
 window.addEventListener('offline',()=>document.getElementById('conn-banner').classList.add('show'));
+
+
+/* ════════════════════════════════════════════════════════
+   API REST DE FIRESTORE — Compatible 100% con Safari
+   Usa fetch() normal (HTTPS) en lugar de WebSockets/gRPC
+   ════════════════════════════════════════════════════════ */
+const PROJ='fisiocash';
+const FB_BASE=`https://firestore.googleapis.com/v1/projects/${PROJ}/databases/(default)/documents`;
+
+function toVal(v){
+  if(v===null||v===undefined)return{nullValue:null};
+  if(typeof v==='boolean')return{booleanValue:v};
+  if(typeof v==='number')return{integerValue:String(v)};
+  if(typeof v==='string')return{stringValue:v};
+  if(Array.isArray(v))return{arrayValue:{values:v.map(toVal)}};
+  if(typeof v==='object')return{mapValue:{fields:toFields(v)}};
+  return{stringValue:String(v)};
+}
+function toFields(obj){
+  const f={};
+  for(const[k,v]of Object.entries(obj))f[k]=toVal(v);
+  return f;
+}
+async function getToken(){
+  if(!auth.currentUser)throw new Error('Sin sesión activa');
+  return auth.currentUser.getIdToken(true);
+}
+async function restAdd(col,data){
+  const token=await getToken();
+  const r=await fetch(`${FB_BASE}/${col}`,{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body:JSON.stringify({fields:toFields(data)})
+  });
+  if(!r.ok){const t=await r.text();throw new Error('REST '+r.status+': '+t);}
+  const doc=await r.json();
+  return{id:doc.name.split('/').pop()};
+}
+async function restUpdate(col,id,data){
+  const token=await getToken();
+  const fields=toFields(data);
+  const mask=Object.keys(fields).map(k=>'updateMask.fieldPaths='+k).join('&');
+  const r=await fetch(`${FB_BASE}/${col}/${id}?${mask}`,{
+    method:'PATCH',
+    headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+    body:JSON.stringify({fields})
+  });
+  if(!r.ok){const t=await r.text();throw new Error('REST '+r.status+': '+t);}
+}
+async function restDelete(col,id){
+  const token=await getToken();
+  const r=await fetch(`${FB_BASE}/${col}/${id}`,{
+    method:'DELETE',
+    headers:{'Authorization':'Bearer '+token}
+  });
+  if(!r.ok){const t=await r.text();throw new Error('REST '+r.status+': '+t);}
+}
 
 let ingresos=[],gastos=[],pacientes=[],citas=[],paquetes=[],unsubs=[];
 const today=new Date().toISOString().split('T')[0];
@@ -429,15 +482,6 @@ function mostrarError(msg){
   console.error('[FisioCash]',msg);
 }
 
-function dbWrite(promesa, timeoutMs=15000){
-  /* Wrapper con timeout para evitar escrituras colgadas en Safari */
-  return Promise.race([
-    promesa,
-    new Promise((_,reject)=>
-      setTimeout(()=>reject(new Error('TIMEOUT: Firebase no respondió en '+timeoutMs/1000+'s. Intenta de nuevo.')), timeoutMs)
-    )
-  ]);
-}
 
 const hl=id=>{const e=document.getElementById(id);e.style.borderColor='#8B1C1C';setTimeout(()=>e.style.borderColor='',1500);};
 const setDates=()=>{['i-date','g-date','c-date'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=today;});const ct=document.getElementById('c-time');if(ct)ct.value='08:00';};
@@ -560,14 +604,14 @@ window.addIngreso=async()=>{
   const date=document.getElementById('i-date').value,concept=document.getElementById('i-concept').value.trim(),serv=document.getElementById('i-serv').value,pay=document.getElementById('i-pay').value,amount=parseFloat(document.getElementById('i-amount').value);
   if(!date||!concept||isNaN(amount)||amount<=0){hl('i-amount');return;}
   try{
-    await dbWrite(addDoc(collection(db,'ingresos'),{date,concept,serv,pay,amount,createdAt:Date.now()}));
+    await restAdd('ingresos',{date,concept,serv,pay,amount,createdAt:Date.now()});
     document.getElementById('i-concept').value='';document.getElementById('i-amount').value='';
     mostrarExito('Ingreso guardado en la nube');
   }catch(e){mostrarError('Error al guardar ingreso: '+e.message);}
 };
 window.delIngreso=async id=>{
-  try{await deleteDoc(doc(db,'ingresos',id));toast('Ingreso eliminado');}
-  catch(e){toast('Error al eliminar: '+e.message,true);}
+  try{await restDelete('ingresos',id);toast('Ingreso eliminado');}
+  catch(e){mostrarError('Error al eliminar ingreso: '+e.message);}
 };
 function renderIngresos(){
   const mes=document.getElementById('filter-mes').value,serv=document.getElementById('filter-serv').value,pago=document.getElementById('filter-pago').value;
@@ -586,14 +630,14 @@ window.addGasto=async()=>{
   const date=document.getElementById('g-date').value,desc=document.getElementById('g-desc').value.trim(),cat=document.getElementById('g-cat').value,amount=parseFloat(document.getElementById('g-amount').value);
   if(!date||!desc||isNaN(amount)||amount<=0){hl('g-amount');return;}
   try{
-    await dbWrite(addDoc(collection(db,'gastos'),{date,desc,cat,amount,createdAt:Date.now()}));
+    await restAdd('gastos',{date,desc,cat,amount,createdAt:Date.now()});
     document.getElementById('g-desc').value='';document.getElementById('g-amount').value='';
     mostrarExito('Gasto guardado en la nube');
   }catch(e){mostrarError('Error al guardar gasto: '+e.message);}
 };
 window.delGasto=async id=>{
-  try{await deleteDoc(doc(db,'gastos',id));toast('Gasto eliminado');}
-  catch(e){toast('Error al eliminar: '+e.message,true);}
+  try{await restDelete('gastos',id);toast('Gasto eliminado');}
+  catch(e){mostrarError('Error al eliminar gasto: '+e.message);}
 };
 function renderGastos(){
   const tI=ingresos.reduce((s,e)=>s+e.amount,0),budget=tI*.6,tG=gastos.reduce((s,e)=>s+e.amount,0),pct=budget>0?Math.min(100,Math.round(tG/budget*100)):0;
@@ -622,8 +666,8 @@ window.addPaciente=async()=>{
   const btn=document.querySelector('[onclick="addPaciente()"]');
   if(btn){btn.disabled=true;btn.textContent='Guardando...';}
   try{
-    const ref=await dbWrite(addDoc(collection(db,'pacientes'),{name,phone,condition,dob,uid:user.uid,createdAt:Date.now()}));
-    console.log('[FisioCash] Paciente guardado ID:',ref.id);
+    const ref=await restAdd('pacientes',{name,phone,condition,dob,uid:user.uid,createdAt:Date.now()});
+    console.log('[FisioCash] Paciente guardado ID:',ref.id,'(via REST)');
     /* Limpiar campos */
     ['p-name','p-phone','p-condition','p-dob'].forEach(id=>{
       const el=document.getElementById(id);
@@ -645,7 +689,7 @@ window.addPaciente=async()=>{
 };
 
 window.delPaciente=async id=>{
-  try{await deleteDoc(doc(db,'pacientes',id));toast('Paciente eliminado');}
+  try{await restDelete('pacientes',id);toast('Paciente eliminado');}
   catch(e){toast('Error al eliminar: '+e.message,true);}
 };
 window.editPaciente=id=>{
@@ -663,7 +707,7 @@ window.saveEditPaciente=async()=>{
   const name=document.getElementById('edit-name').value.trim();
   if(!name){hl('edit-name');return;}
   try{
-    await updateDoc(doc(db,'pacientes',id),{
+    await restUpdate('pacientes',id,{
       name,
       phone:document.getElementById('edit-phone').value.trim(),
       condition:document.getElementById('edit-condition').value.trim(),
@@ -715,15 +759,15 @@ window.onCFF=()=>{
 };
 async function fOCP(patient,serv,fechaInicio){
   const ex=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);if(ex)return ex;
-  const r=await addDoc(collection(db,'paquetes'),{patient,serv,sesionesTotal:PAQSES[serv],sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null,createdAt:Date.now()});
+  const r=await restAdd('paquetes',{patient,serv,sesionesTotal:PAQSES[serv],sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null,createdAt:Date.now()});
   return{id:r.id,patient,serv,sesionesTotal:PAQSES[serv],sesionesUsadas:0,fechaInicio,sesiones:[],ingresoId:null};
 }
 async function addSP(patient,serv,fecha,citaId){
   const pq=paquetes.find(p=>p.patient===patient&&p.serv===serv&&p.sesionesUsadas<p.sesionesTotal);
-  if(pq){await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:pq.sesionesUsadas+1,sesiones:[...(pq.sesiones||[]),{fecha,citaId,num:pq.sesionesUsadas+1}]});return pq;}return null;
+  if(pq){await restUpdate('paquetes',pq.id,{sesionesUsadas:pq.sesionesUsadas+1,sesiones:[...(pq.sesiones||[]),{fecha,citaId,num:pq.sesionesUsadas+1}]});return pq;}return null;
 }
 async function remSP(citaId){
-  for(const pq of paquetes){if(!(pq.sesiones||[]).find(s=>s.citaId===citaId))continue;await updateDoc(doc(db,'paquetes',pq.id),{sesionesUsadas:Math.max(0,pq.sesionesUsadas-1),sesiones:(pq.sesiones||[]).filter(s=>s.citaId!==citaId)});}
+  for(const pq of paquetes){if(!(pq.sesiones||[]).find(s=>s.citaId===citaId))continue;await restUpdate('paquetes',pq.id,{sesionesUsadas:Math.max(0,pq.sesionesUsadas-1),sesiones:(pq.sesiones||[]).filter(s=>s.citaId!==citaId)});}
 }
 window.addCita=async()=>{
   const date=document.getElementById('c-date').value,time=document.getElementById('c-time').value,patient=document.getElementById('c-patient').value,serv=document.getElementById('c-serv').value,pay=document.getElementById('c-pay').value,amount=parseFloat(document.getElementById('c-amount').value)||0,status=document.getElementById('c-status').value,notes=document.getElementById('c-notes').value.trim();
@@ -732,11 +776,11 @@ window.addCita=async()=>{
     let ingresoId=null;
     if(isP(serv)){
       const pq=await fOCP(patient,serv,date);
-      if(status==='Realizada'&&amount>0&&!pq.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});toast('✓ Paquete registrado + ingreso guardado');}
+      if(status==='Realizada'&&amount>0&&!pq.ingresoId){const ir=await restAdd('ingresos',{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;await restUpdate('paquetes',pq.id,{ingresoId:ir.id});toast('✓ Paquete registrado + ingreso guardado');}
     }else if(status==='Realizada'&&amount>0){
-      const ir=await addDoc(collection(db,'ingresos'),{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;toast('✓ Cita realizada — ingreso: '+fmt(amount));
+      const ir=await restAdd('ingresos',{date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:Date.now()});ingresoId=ir.id;toast('✓ Cita realizada — ingreso: '+fmt(amount));
     }
-    const cr=await addDoc(collection(db,'citas'),{date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:Date.now()});
+    const cr=await restAdd('citas',{date,time,patient,serv,pay,amount,status,notes,ingresoId,createdAt:Date.now()});
     if(isP(serv)&&status==='Realizada')await addSP(patient,serv,date,cr.id);
     if(status!=='Realizada')toast('✓ Cita agendada y guardada');
     document.getElementById('c-patient').value='';document.getElementById('c-amount').value='';document.getElementById('c-notes').value='';document.getElementById('c-status').value='Pendiente';document.getElementById('tarifa-hint').style.display='none';document.getElementById('paq-aviso').style.display='none';
@@ -745,22 +789,22 @@ window.addCita=async()=>{
 window.delCita=async id=>{
   const c=citas.find(c=>c.id===id);
   try{
-    if(c){if(c.ingresoId)await deleteDoc(doc(db,'ingresos',c.ingresoId));if(isP(c.serv)&&c.status==='Realizada')await remSP(id);}
-    await deleteDoc(doc(db,'citas',id));toast('Cita eliminada');
+    if(c){if(c.ingresoId)await restDelete('ingresos',c.ingresoId);if(isP(c.serv)&&c.status==='Realizada')await remSP(id);}
+    await restDelete('citas',id);toast('Cita eliminada');
   }catch(e){toast('Error al eliminar: '+e.message,true);}
 };
 window.updateCitaStatus=async(id,val)=>{
   const c=citas.find(c=>c.id===id);if(!c)return;
   const prev=c.status;
   try{
-    await updateDoc(doc(db,'citas',id),{status:val});
+    await restUpdate('citas',id,{status:val});
     if(val==='Realizada'&&prev!=='Realizada'){
-      if(isP(c.serv)){await addSP(c.patient,c.serv,c.date,c.id);const pq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);if(pq&&!pq.ingresoId&&c.amount>0){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:ir.id});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('✓ Ingreso de paquete guardado');}else{const u=pq?pq.sesionesUsadas+1:1,t=pq?pq.sesionesTotal:'?';toast(`✓ Sesión ${u}/${t} registrada`);}}
-      else if(c.amount>0&&!c.ingresoId){const ir=await addDoc(collection(db,'ingresos'),{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await updateDoc(doc(db,'citas',id),{ingresoId:ir.id});toast('✓ Ingreso guardado — '+fmt(c.amount));}
+      if(isP(c.serv)){await addSP(c.patient,c.serv,c.date,c.id);const pq=paquetes.find(p=>p.patient===c.patient&&p.serv===c.serv);if(pq&&!pq.ingresoId&&c.amount>0){const ir=await restAdd('ingresos',{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await restUpdate('paquetes',pq.id,{ingresoId:ir.id});await restUpdate('citas',id,{ingresoId:ir.id});toast('✓ Ingreso de paquete guardado');}else{const u=pq?pq.sesionesUsadas+1:1,t=pq?pq.sesionesTotal:'?';toast(`✓ Sesión ${u}/${t} registrada`);}}
+      else if(c.amount>0&&!c.ingresoId){const ir=await restAdd('ingresos',{date:c.date,concept:`${c.serv} — ${c.patient}`,serv:c.serv,pay:c.pay,amount:c.amount,createdAt:Date.now()});await restUpdate('citas',id,{ingresoId:ir.id});toast('✓ Ingreso guardado — '+fmt(c.amount));}
     }
     if((val==='Cancelada'||val==='Pendiente')&&prev==='Realizada'){
       if(isP(c.serv))await remSP(id);
-      if(c.ingresoId){await deleteDoc(doc(db,'ingresos',c.ingresoId));await updateDoc(doc(db,'citas',id),{ingresoId:null});const pq=paquetes.find(p=>p.ingresoId===c.ingresoId);if(pq)await updateDoc(doc(db,'paquetes',pq.id),{ingresoId:null});toast('Ingreso revertido');}
+      if(c.ingresoId){await restDelete('ingresos',c.ingresoId);await restUpdate('citas',id,{ingresoId:null});const pq=paquetes.find(p=>p.ingresoId===c.ingresoId);if(pq)await restUpdate('paquetes',pq.id,{ingresoId:null});toast('Ingreso revertido');}
     }
   }catch(e){toast('Error al actualizar cita: '+e.message,true);}
 };
