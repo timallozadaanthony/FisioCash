@@ -408,11 +408,9 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// ── CRÍTICO: Forzar Long Polling para compatibilidad con Safari ──
-// Safari bloquea WebSockets de Firebase por ITP (Intelligent Tracking Prevention)
-// Long Polling funciona en todos los navegadores sin restricciones
+// ── Configuración Firestore para máxima compatibilidad con Safari ──
 db.settings({
-  experimentalForceLongPolling: true,
+  experimentalAutoDetectLongPolling: true,
   merge: true
 });
 
@@ -524,10 +522,22 @@ auth.onAuthStateChanged(user=>{
     ls.style.display='none';
     as.style.display='block';
     ld.style.display='flex';
-    document.getElementById('loading-text').textContent='Sincronizando datos...';
+    document.getElementById('loading-text').textContent='Conectando con la nube...';
     btn.disabled=false; btn.textContent='Entrar';
     setDates();
-    setupListeners();
+    // Verificar conectividad con Firestore antes de arrancar listeners
+    db.collection('_ping').doc('test').set({t:Date.now()})
+      .then(()=>{
+        db.collection('_ping').doc('test').delete();
+        document.getElementById('loading-text').textContent='Sincronizando datos...';
+        setupListeners();
+      })
+      .catch(e=>{
+        console.error('[FisioCash] Error de conectividad Firestore:',e.code,e.message);
+        document.getElementById('loading-text').textContent='Error de conexión: '+e.message;
+        setTimeout(()=>{document.getElementById('loading').style.display='none';},3000);
+        setupListeners(); // Intentar de todas formas
+      });
   } else {
     as.style.display='none';
     ls.style.display='flex';
@@ -540,42 +550,49 @@ function setupListeners() {
   unsubs.forEach(u=>{try{u();}catch(e){}});
   unsubs=[];
   let primeraVez=true;
+  // Ocultar loading máximo en 4 segundos
+  const loadTimeout=setTimeout(()=>{
+    document.getElementById('loading').style.display='none';
+    if(primeraVez){
+      console.warn('[FisioCash] Firestore tardó demasiado - posible problema de conexión');
+    }
+  },4000);
 
   unsubs.push(
-    db.collection('ingresos').orderBy('createdAt','desc').onSnapshot(s=>{
-      ingresos=s.docs.map(d=>({id:d.id,...d.data()}));
+    db.collection('ingresos').onSnapshot(s=>{
+      ingresos=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
       updMF('filter-mes',ingresos);
       renderIngresos(); renderGastos();
-      if(primeraVez){document.getElementById('loading').style.display='none';primeraVez=false;}
+      if(primeraVez){clearTimeout(loadTimeout);document.getElementById('loading').style.display='none';primeraVez=false;}
     }, e=>{
       console.error('ingresos:',e);
       document.getElementById('loading').style.display='none';
       toast('Error al cargar ingresos: '+e.message, false);
     }),
 
-    db.collection('gastos').orderBy('createdAt','desc').onSnapshot(s=>{
-      gastos=s.docs.map(d=>({id:d.id,...d.data()}));
+    db.collection('gastos').onSnapshot(s=>{
+      gastos=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
       renderGastos();
     }, e=>toast('Error al cargar gastos: '+e.message, false)),
 
-    db.collection('pacientes').orderBy('createdAt','desc').onSnapshot(s=>{
-      pacientes=s.docs.map(d=>({id:d.id,...d.data()}));
+    db.collection('pacientes').onSnapshot(s=>{
+      pacientes=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
       renderPacientes(); refreshPS();
     }, e=>toast('Error al cargar pacientes: '+e.message, false)),
 
-    db.collection('citas').orderBy('createdAt','desc').onSnapshot(s=>{
-      citas=s.docs.map(d=>({id:d.id,...d.data()}));
+    db.collection('citas').onSnapshot(s=>{
+      citas=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
       updMF('c-filter-mes',citas);
       renderCitas(); renderPacientes();
     }, e=>toast('Error al cargar citas: '+e.message, false)),
 
-    db.collection('paquetes').orderBy('createdAt','desc').onSnapshot(s=>{
-      paquetes=s.docs.map(d=>({id:d.id,...d.data()}));
+    db.collection('paquetes').onSnapshot(s=>{
+      paquetes=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
       renderPaquetes();
     }, e=>toast('Error al cargar paquetes: '+e.message, false))
   );
 
-  setTimeout(()=>document.getElementById('loading').style.display='none', 7000);
+  // Timeout manejado arriba
 }
 
 // ── TABS ──
