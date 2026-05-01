@@ -364,10 +364,15 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import{getFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getFirestore,initializeFirestore,collection,addDoc,deleteDoc,doc,updateDoc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",authDomain:"fisiocash.firebaseapp.com",projectId:"fisiocash",storageBucket:"fisiocash.firebasestorage.app",messagingSenderId:"356983308627",appId:"1:356983308627:web:3653c65a5f2a83df23a1a6"});
-const auth=getAuth(app),db=getFirestore(app);
+const auth=getAuth(app);
+/* Long Polling: soluciona el bloqueo de WebSockets en Safari iOS y macOS */
+const db=initializeFirestore(app,{
+  experimentalForceLongPolling:true,
+  useFetchStreams:false
+});
 
 /* Firebase usa  por defecto — no se necesita configuración adicional */
 console.log('[FisioCash] Firebase inicializado correctamente');
@@ -424,12 +429,12 @@ function mostrarError(msg){
   console.error('[FisioCash]',msg);
 }
 
-function dbWrite(promesa, timeoutMs=8000){
+function dbWrite(promesa, timeoutMs=15000){
   /* Wrapper con timeout para evitar escrituras colgadas en Safari */
   return Promise.race([
     promesa,
     new Promise((_,reject)=>
-      setTimeout(()=>reject(new Error('Sin respuesta de Firebase (timeout). Verifica tu conexión.')), timeoutMs)
+      setTimeout(()=>reject(new Error('TIMEOUT: Firebase no respondió en '+timeoutMs/1000+'s. Intenta de nuevo.')), timeoutMs)
     )
   ]);
 }
@@ -628,7 +633,7 @@ window.addPaciente=async()=>{
     mostrarExito('Paciente guardado correctamente');
   }catch(e){
     console.error('[FisioCash] Error al guardar paciente:',e.code,e.message);
-    const msg=e.message.includes('timeout')
+    const msg=e.message.includes('timeout')||e.message.includes('TIMEOUT')
       ? 'Sin respuesta de Firebase. Verifica tu conexión a internet.'
       : e.code==='permission-denied'
         ? 'Sin permiso. Ve a Firebase → Firestore Rules y publica las reglas.'
