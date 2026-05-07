@@ -129,6 +129,10 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 .loading-text{font-size:14px;color:#CBE3EF;font-weight:500;}
 .paq-aviso{display:none;margin-top:10px;padding:8px 12px;background:#CBE3EF;border-radius:8px;font-size:12px;color:#0C213C;font-weight:500;}
 
+/* Indicador de conexión */
+.conn-status{position:fixed;top:12px;right:12px;font-size:11px;padding:6px 12px;border-radius:99px;font-weight:600;z-index:8500;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+.conn-offline{background:#fff3cd;color:#6b4500;border:1.5px solid #b07800;}
+
 @media(max-width:600px){
   .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr));}
   .brand-name{font-size:26px;}
@@ -145,6 +149,7 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="conn-status conn-offline" id="conn-status">⚠️ Sin conexión — los datos se guardarán al reconectar</div>
 
 <!-- LOGIN -->
 <div id="login-screen">
@@ -392,9 +397,11 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 
 <script>
 // ══════════════════════════════════════════════
-//  FIREBASE CONFIG — SDK COMPAT (v9)
-//  Compatible con Safari iOS, Safari macOS,
-//  Chrome, Firefox y todos los navegadores.
+//  FIREBASE CONFIG — REPARADO v2
+//  Cambios clave:
+//  1. AutoDetect en lugar de ForceLongPolling (más rápido)
+//  2. setPersistence explícito (no se pierde sesión en Safari)
+//  3. enablePersistence (caché offline para sincronización fiable)
 // ══════════════════════════════════════════════
 firebase.initializeApp({
   apiKey: "AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",
@@ -408,8 +415,26 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// ── Long Polling forzado: máxima compatibilidad Safari v8 ──
-db.settings({ experimentalForceLongPolling: true });
+// ── REPARACIÓN 1: AutoDetect en lugar de Force ──
+// Antes: experimentalForceLongPolling (lento siempre)
+// Ahora: detecta automáticamente y usa el modo más rápido posible
+db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
+
+// ── REPARACIÓN 2: Persistencia de Auth explícita ──
+// Esto evita que Safari "olvide" la sesión por su protección de privacidad
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>{
+  console.warn('[FisioCash] Auth persistence no disponible:', e.message);
+});
+
+// ── REPARACIÓN 3: Persistencia offline (caché local) ──
+// Si tu internet falla, los datos se guardan localmente y se suben al reconectar
+db.enablePersistence({synchronizeTabs: true}).catch(e=>{
+  if(e.code==='failed-precondition'){
+    console.warn('[FisioCash] Persistencia: hay múltiples pestañas abiertas');
+  } else if(e.code==='unimplemented'){
+    console.warn('[FisioCash] Este navegador no soporta caché offline');
+  }
+});
 
 // ── Estado local ──
 let ingresos=[], gastos=[], pacientes=[], citas=[], paquetes=[];
@@ -427,6 +452,19 @@ const stC  = {Realizada:'bg-green',Pendiente:'bg-amber',Cancelada:'bg-red'};
 const dotC = {Realizada:'#254E7A',Pendiente:'#b07800',Cancelada:'#8B1C1C'};
 const avBg = ['#CBE3EF','#e8e0f5','#d4edda','#fff3cd','#fde8e0'];
 const avFg = ['#0C213C','#3a1a6e','#1a5e2a','#6b4500','#7a2e1a'];
+
+// ── Indicador de conexión ──
+function updateConnStatus(){
+  const el=document.getElementById('conn-status');
+  if(!el) return;
+  if(navigator.onLine){
+    el.style.display='none';
+  } else {
+    el.style.display='block';
+  }
+}
+window.addEventListener('online', updateConnStatus);
+window.addEventListener('offline', updateConnStatus);
 
 // ── Utilidades ──
 const fmt = n => '$'+Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -519,13 +557,11 @@ auth.onAuthStateChanged(user=>{
     ls.style.display='none';
     as.style.display='block';
     ld.style.display='flex';
-    document.getElementById('loading-text').textContent='Conectando con la nube...';
+    document.getElementById('loading-text').textContent='Sincronizando datos...';
     btn.disabled=false; btn.textContent='Entrar';
     setDates();
-    document.getElementById('loading-text').textContent='Sincronizando datos...';
+    updateConnStatus();
     setupListeners();
-    // Ocultar loading sin importar qué después de 5 segundos
-    setTimeout(()=>{ document.getElementById('loading').style.display='none'; }, 5000);
   } else {
     as.style.display='none';
     ls.style.display='flex';
@@ -534,27 +570,37 @@ auth.onAuthStateChanged(user=>{
 });
 
 // ── LISTENERS FIRESTORE ──
+// REPARACIÓN: Un solo timeout, esconder loading apenas llegue cualquier dato
 function setupListeners() {
   unsubs.forEach(u=>{try{u();}catch(e){}});
   unsubs=[];
-  let primeraVez=true;
-  // Ocultar loading máximo en 4 segundos
-  const loadTimeout=setTimeout(()=>{
-    document.getElementById('loading').style.display='none';
-    if(primeraVez){
-      console.warn('[FisioCash] Firestore tardó demasiado - posible problema de conexión');
+  let cargado = false;
+
+  const ocultarLoading = () => {
+    if(!cargado){
+      cargado = true;
+      document.getElementById('loading').style.display='none';
     }
-  },4000);
+  };
+
+  // Timeout de seguridad: si en 6 segundos no llegó nada, esconder loading igual
+  const safetyTimeout = setTimeout(()=>{
+    if(!cargado){
+      console.warn('[FisioCash] Carga lenta — mostrando UI con datos disponibles');
+      ocultarLoading();
+    }
+  }, 6000);
 
   unsubs.push(
     db.collection('ingresos').onSnapshot(s=>{
       ingresos=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
       updMF('filter-mes',ingresos);
       renderIngresos(); renderGastos();
-      if(primeraVez){clearTimeout(loadTimeout);document.getElementById('loading').style.display='none';primeraVez=false;}
+      clearTimeout(safetyTimeout);
+      ocultarLoading();
     }, e=>{
       console.error('ingresos:',e);
-      document.getElementById('loading').style.display='none';
+      ocultarLoading();
       toast('Error al cargar ingresos: '+e.message, false);
     }),
 
@@ -579,8 +625,6 @@ function setupListeners() {
       renderPaquetes();
     }, e=>toast('Error al cargar paquetes: '+e.message, false))
   );
-
-  // Timeout manejado arriba
 }
 
 // ── TABS ──
@@ -620,7 +664,7 @@ function gcL(c){
 }
 
 // ══════════════════════════════════════════════
-//  INGRESOS
+//  INGRESOS — REPARADO: limpia campos INMEDIATAMENTE
 // ══════════════════════════════════════════════
 function addIngreso(){
   const date=document.getElementById('i-date').value;
@@ -629,12 +673,13 @@ function addIngreso(){
   const pay=document.getElementById('i-pay').value;
   const amount=parseFloat(document.getElementById('i-amount').value);
   if(!date||!concept||isNaN(amount)||amount<=0){hl('i-amount');return;}
+
+  // ── REPARACIÓN: Limpiar AHORA, no después ──
+  limpiarCampos(['i-concept','i-amount']);
+
   setBtnLoading('btn-add-ingreso',true,'+ Agregar');
   db.collection('ingresos').add({date,concept,serv,pay,amount,createdAt:Date.now()})
-    .then(()=>{
-      limpiarCampos(['i-concept','i-amount']);
-      toast('✓ Ingreso guardado');
-    })
+    .then(()=>toast('✓ Ingreso guardado'))
     .catch(e=>toast('Error: '+e.message, false))
     .finally(()=>setBtnLoading('btn-add-ingreso',false,'+ Agregar'));
 }
@@ -670,7 +715,7 @@ function renderIngresos(){
 }
 
 // ══════════════════════════════════════════════
-//  GASTOS
+//  GASTOS — REPARADO: limpia campos INMEDIATAMENTE
 // ══════════════════════════════════════════════
 function addGasto(){
   const date=document.getElementById('g-date').value;
@@ -678,12 +723,13 @@ function addGasto(){
   const cat=document.getElementById('g-cat').value;
   const amount=parseFloat(document.getElementById('g-amount').value);
   if(!date||!desc||isNaN(amount)||amount<=0){hl('g-amount');return;}
+
+  // ── REPARACIÓN: Limpiar AHORA ──
+  limpiarCampos(['g-desc','g-amount']);
+
   setBtnLoading('btn-add-gasto',true,'+ Agregar');
   db.collection('gastos').add({date,desc,cat,amount,createdAt:Date.now()})
-    .then(()=>{
-      limpiarCampos(['g-desc','g-amount']);
-      toast('✓ Gasto guardado');
-    })
+    .then(()=>toast('✓ Gasto guardado'))
     .catch(e=>toast('Error: '+e.message,false))
     .finally(()=>setBtnLoading('btn-add-gasto',false,'+ Agregar'));
 }
@@ -720,7 +766,7 @@ function renderGastos(){
 }
 
 // ══════════════════════════════════════════════
-//  PACIENTES
+//  PACIENTES — REPARADO: limpia campos INMEDIATAMENTE
 // ══════════════════════════════════════════════
 function addPaciente(){
   const name=document.getElementById('p-name').value.trim();
@@ -728,16 +774,17 @@ function addPaciente(){
   const phone=document.getElementById('p-phone').value.trim();
   const dob=document.getElementById('p-dob').value;
   const condition=document.getElementById('p-condition').value.trim();
+
+  // ── REPARACIÓN: Limpiar AHORA, no después de Firebase ──
+  limpiarCampos(['p-name','p-phone','p-dob','p-condition']);
+  setTimeout(()=>{const el=document.getElementById('p-name');if(el)el.focus();},50);
+
   setBtnLoading('btn-add-paciente',true,'+ Registrar');
   db.collection('pacientes').add({
     name, phone, dob, condition,
     createdAt: Date.now()
   })
-  .then(()=>{
-    limpiarCampos(['p-name','p-phone','p-dob','p-condition']);
-    setTimeout(()=>{const el=document.getElementById('p-name');if(el)el.focus();},50);
-    toast('✓ Paciente guardado');
-  })
+  .then(()=>toast('✓ Paciente guardado'))
   .catch(e=>{
     console.error('Error al guardar paciente:',e);
     toast('Error: '+e.message, false);
@@ -834,7 +881,7 @@ function togglePD(id){
 }
 
 // ══════════════════════════════════════════════
-//  CITAS
+//  CITAS — REPARADO: limpia campos INMEDIATAMENTE
 // ══════════════════════════════════════════════
 function onCFF(){
   const serv=document.getElementById('c-serv').value;
@@ -874,6 +921,14 @@ function addCita(){
   const status=document.getElementById('c-status').value;
   const notes=document.getElementById('c-notes').value.trim();
   if(!date||!patient){hl(!date?'c-date':'c-patient');return;}
+
+  // ── REPARACIÓN: Limpiar AHORA ──
+  limpiarCampos(['c-notes','c-amount']);
+  document.getElementById('c-patient').value='';
+  document.getElementById('c-status').value='Pendiente';
+  document.getElementById('tarifa-hint').style.display='none';
+  document.getElementById('paq-aviso').style.display='none';
+
   setBtnLoading('btn-add-cita',true,'+ Agendar');
 
   let ingresoId=null;
@@ -912,11 +967,6 @@ function addCita(){
         : Promise.resolve());
 
   flujo.then(()=>guardarCita()).then(()=>{
-    limpiarCampos(['c-notes','c-amount']);
-    document.getElementById('c-patient').value='';
-    document.getElementById('c-status').value='Pendiente';
-    document.getElementById('tarifa-hint').style.display='none';
-    document.getElementById('paq-aviso').style.display='none';
     toast(status==='Realizada'?'✓ Cita realizada + ingreso guardado':'✓ Cita agendada');
   })
   .catch(e=>toast('Error: '+e.message,false))
