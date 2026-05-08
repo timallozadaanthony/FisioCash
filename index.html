@@ -9,10 +9,11 @@
 <meta name="apple-mobile-web-app-title" content="FisioCash">
 <title>FisioCash</title>
 
-<!-- Firebase Compat SDK - funciona en Safari, Chrome, iPhone, Mac -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<!-- Firebase Compat SDK 10.14.1 - Compatible con Safari, Chrome, iPhone, Mac
+     y con la infraestructura moderna de Firebase (.firebasestorage.app) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -397,11 +398,11 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 
 <script>
 // ══════════════════════════════════════════════
-//  FIREBASE CONFIG — REPARADO v3 (versión conservadora)
+//  FIREBASE CONFIG — REPARADO v4
 //  Cambios clave:
-//  1. AutoDetect en lugar de ForceLongPolling (más rápido)
-//  2. setPersistence explícito (no se pierde sesión en Safari)
-//  3. SIN enablePersistence (causa problemas en Safari, mejor sin caché local)
+//  1. SDK actualizado a 10.14.1 compat (compatible con proyectos Firebase modernos)
+//  2. AutoDetect en lugar de ForceLongPolling (más rápido)
+//  3. setPersistence explícito (no se pierde sesión en Safari)
 //  4. Timeout de 12s en operaciones (botón nunca se queda colgado)
 // ══════════════════════════════════════════════
 firebase.initializeApp({
