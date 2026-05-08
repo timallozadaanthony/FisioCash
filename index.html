@@ -397,11 +397,12 @@ tbody td{padding:13px 14px;color:#0C213C;overflow:hidden;text-overflow:ellipsis;
 
 <script>
 // ══════════════════════════════════════════════
-//  FIREBASE CONFIG — REPARADO v2
+//  FIREBASE CONFIG — REPARADO v3 (versión conservadora)
 //  Cambios clave:
 //  1. AutoDetect en lugar de ForceLongPolling (más rápido)
 //  2. setPersistence explícito (no se pierde sesión en Safari)
-//  3. enablePersistence (caché offline para sincronización fiable)
+//  3. SIN enablePersistence (causa problemas en Safari, mejor sin caché local)
+//  4. Timeout de 12s en operaciones (botón nunca se queda colgado)
 // ══════════════════════════════════════════════
 firebase.initializeApp({
   apiKey: "AIzaSyC_2lxPIjvG3m17xMMz4tTWXvlqv5QZC98",
@@ -416,25 +417,24 @@ const auth = firebase.auth();
 const db   = firebase.firestore();
 
 // ── REPARACIÓN 1: AutoDetect en lugar de Force ──
-// Antes: experimentalForceLongPolling (lento siempre)
-// Ahora: detecta automáticamente y usa el modo más rápido posible
-db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
+// Detecta automáticamente y usa el modo más rápido posible en cada navegador
+db.settings({ experimentalAutoDetectLongPolling: true });
 
 // ── REPARACIÓN 2: Persistencia de Auth explícita ──
-// Esto evita que Safari "olvide" la sesión por su protección de privacidad
+// Evita que Safari "olvide" la sesión por su protección de privacidad (ITP)
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>{
   console.warn('[FisioCash] Auth persistence no disponible:', e.message);
 });
 
-// ── REPARACIÓN 3: Persistencia offline (caché local) ──
-// Si tu internet falla, los datos se guardan localmente y se suben al reconectar
-db.enablePersistence({synchronizeTabs: true}).catch(e=>{
-  if(e.code==='failed-precondition'){
-    console.warn('[FisioCash] Persistencia: hay múltiples pestañas abiertas');
-  } else if(e.code==='unimplemented'){
-    console.warn('[FisioCash] Este navegador no soporta caché offline');
-  }
-});
+// ── REPARACIÓN 4: Freno de emergencia (timeout) ──
+// Si Firebase tarda más de 12 segundos, la operación se cancela
+// y el botón se desbloquea automáticamente (no más "Guardando..." infinito)
+function withTimeout(promise, ms=12000, mensaje='Tiempo agotado, revisa tu conexión'){
+  return Promise.race([
+    promise,
+    new Promise((_, reject)=>setTimeout(()=>reject(new Error(mensaje)), ms))
+  ]);
+}
 
 // ── Estado local ──
 let ingresos=[], gastos=[], pacientes=[], citas=[], paquetes=[];
@@ -678,7 +678,7 @@ function addIngreso(){
   limpiarCampos(['i-concept','i-amount']);
 
   setBtnLoading('btn-add-ingreso',true,'+ Agregar');
-  db.collection('ingresos').add({date,concept,serv,pay,amount,createdAt:Date.now()})
+  withTimeout(db.collection('ingresos').add({date,concept,serv,pay,amount,createdAt:Date.now()}))
     .then(()=>toast('✓ Ingreso guardado'))
     .catch(e=>toast('Error: '+e.message, false))
     .finally(()=>setBtnLoading('btn-add-ingreso',false,'+ Agregar'));
@@ -728,7 +728,7 @@ function addGasto(){
   limpiarCampos(['g-desc','g-amount']);
 
   setBtnLoading('btn-add-gasto',true,'+ Agregar');
-  db.collection('gastos').add({date,desc,cat,amount,createdAt:Date.now()})
+  withTimeout(db.collection('gastos').add({date,desc,cat,amount,createdAt:Date.now()}))
     .then(()=>toast('✓ Gasto guardado'))
     .catch(e=>toast('Error: '+e.message,false))
     .finally(()=>setBtnLoading('btn-add-gasto',false,'+ Agregar'));
@@ -780,10 +780,10 @@ function addPaciente(){
   setTimeout(()=>{const el=document.getElementById('p-name');if(el)el.focus();},50);
 
   setBtnLoading('btn-add-paciente',true,'+ Registrar');
-  db.collection('pacientes').add({
+  withTimeout(db.collection('pacientes').add({
     name, phone, dob, condition,
     createdAt: Date.now()
-  })
+  }))
   .then(()=>toast('✓ Paciente guardado'))
   .catch(e=>{
     console.error('Error al guardar paciente:',e);
@@ -966,7 +966,7 @@ function addCita(){
         ? db.collection('ingresos').add({date,concept:`${serv} — ${patient}`,serv,pay,amount,createdAt:ts}).then(ir=>{ingresoId=ir.id;})
         : Promise.resolve());
 
-  flujo.then(()=>guardarCita()).then(()=>{
+  withTimeout(flujo.then(()=>guardarCita())).then(()=>{
     toast(status==='Realizada'?'✓ Cita realizada + ingreso guardado':'✓ Cita agendada');
   })
   .catch(e=>toast('Error: '+e.message,false))
