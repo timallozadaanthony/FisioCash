@@ -418,8 +418,8 @@ const auth = firebase.auth();
 const db   = firebase.firestore();
 
 // ── REPARACIÓN 1: AutoDetect en lugar de Force ──
-// Detecta automáticamente y usa el modo más rápido posible en cada navegador
-db.settings({ experimentalAutoDetectLongPolling: true });
+// merge:true es OBLIGATORIO en SDK 10 (combina settings en vez de sobrescribirlos)
+db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
 
 // ── REPARACIÓN 2: Persistencia de Auth explícita ──
 // Evita que Safari "olvide" la sesión por su protección de privacidad (ITP)
